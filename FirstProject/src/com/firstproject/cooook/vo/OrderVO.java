@@ -1,4 +1,4 @@
-package com.firstproject.orders.vo;
+package com.firstproject.cooook.vo;
 
 import java.sql.Date;
 
@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 public class OrderVO {
     private int orderId;
-    private String userId;
-    private String productId;
+    private int userId;
+    private int productId;
     private int quantity;
     private double totalPrice;
     private Date orderDate;
