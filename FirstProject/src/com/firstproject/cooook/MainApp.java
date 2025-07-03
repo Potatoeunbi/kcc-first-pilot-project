@@ -1,7 +1,9 @@
 package com.firstproject.cooook;
 
-public class MainApp {
+import java.util.Scanner;
 
+public class MainApp {
+	Scanner sc = new Scanner(System.in);
 	public static void main(String[] args) {
 		printBanner();
 
@@ -27,6 +29,7 @@ public class MainApp {
 	    System.out.println("╚════════════════════════════════════════════════╝");
 	    System.out.println(ANSI_GREEN + "		   🚀 재고 재고 재고! 관리 시스템! 🚀" + ANSI_RESET);
 	    System.out.println();
+	    System.out.println("필");
 	}
 
 }
