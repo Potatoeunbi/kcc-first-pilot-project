@@ -1,4 +1,4 @@
-package com.firstproject.orders.db;
+package com.firstproject.cooook.db;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
