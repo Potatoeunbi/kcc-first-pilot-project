@@ -15,54 +15,68 @@ public class MenuDao {
     DBUtil du = new DBUtil();
     
     public List<MenuVO> getCategorySearchMenu(int categoryId) {
-        List<MenuVO> mList = new ArrayList<>();
+        List<MenuVO> list = new ArrayList<>();
         Connection con = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        System.out.println("호출?1");
+
         try {
-            con = du.getConnection();
-
-            String sql = "SELECT menu_name, menu_id, category_id FROM menu WHERE category_id = ?";
-            PreparedStatement pstmt = con.prepareStatement(sql);
-            pstmt.setInt(1, categoryId);
-            ResultSet rs = pstmt.executeQuery();
-
+            con = DBUtil.getConnection();
+            String sql = "SELECT menu_id, menu_name, category_id FROM menu WHERE category_id = ?";
+            stmt = con.prepareStatement(sql);
+            stmt.setInt(1, categoryId);
+            rs = stmt.executeQuery();
+            System.out.println("호출?2");
+            System.out.println("카테고리 id" + categoryId);
             while (rs.next()) {
                 MenuVO mvo = new MenuVO();
-                mvo.setCategoryId(rs.getInt("category_id"));
                 mvo.setMenuID(rs.getInt("menu_id"));
                 mvo.setMenuName(rs.getString("menu_name"));
-                mList.add(mvo);
+                mvo.setCategoryId(rs.getInt("category_id"));
+                System.out.println("호출?3");
+                list.add(mvo);
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println("메뉴 조회 오류: " + e.getMessage());
         } finally {
-            du.close(con);
+            DBUtil.close(con, stmt, rs);
         }
-        return mList;
+
+        return list;
     }
+
     
-    public List<MenuVO> getStringSearchMenu(String keyword){
-        List<MenuVO> mList = new ArrayList<>();
+    public List<MenuVO> getStringSearchMenu(String keyword) {
+        List<MenuVO> list = new ArrayList<>();
         Connection con = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
         try {
-        	con = du.getConnection();
-        	String sql = "SELECT menu_name,menu_id,category_id, "
-        			+ " FROM menu WHERE REGEXP_LIKE ";
-        	
-        	
-            PreparedStatement pstmt = con.prepareStatement(sql); // ← 여기가 핵심
+            con = DBUtil.getConnection();
+            String sql = "SELECT MENU_ID, MENU_NAME, CATEGORY_ID FROM MENU WHERE MENU_NAME LIKE ?";
+            stmt = con.prepareStatement(sql);
+            stmt.setString(1, "%" + keyword + "%");
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                MenuVO mvo = new MenuVO();
+                mvo.setMenuID(rs.getInt("MENU_ID"));
+                mvo.setMenuName(rs.getString("MENU_NAME"));
+                mvo.setCategoryId(rs.getInt("CATEGORY_ID"));
+                list.add(mvo);
+            }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
-
-        }finally {
-            du.close(con);
-
+            System.out.println("이름 검색 오류: " + e.getMessage());
+        } finally {
+            DBUtil.close(con, stmt, rs);
         }
 
-        
-        
-        return mList;
+        return list;
     }
+
     
 } 
