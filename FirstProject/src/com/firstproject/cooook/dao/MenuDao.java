@@ -19,7 +19,6 @@ public class MenuDao {
         Connection con = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        System.out.println("호출?1");
 
         try {
             con = DBUtil.getConnection();
@@ -27,14 +26,12 @@ public class MenuDao {
             stmt = con.prepareStatement(sql);
             stmt.setInt(1, categoryId);
             rs = stmt.executeQuery();
-            System.out.println("호출?2");
             System.out.println("카테고리 id" + categoryId);
             while (rs.next()) {
                 MenuVO mvo = new MenuVO();
                 mvo.setMenuID(rs.getInt("menu_id"));
                 mvo.setMenuName(rs.getString("menu_name"));
                 mvo.setCategoryId(rs.getInt("category_id"));
-                System.out.println("호출?3");
                 list.add(mvo);
             }
 
