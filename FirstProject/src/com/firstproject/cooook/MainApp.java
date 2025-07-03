@@ -17,7 +17,7 @@ public class MainApp {
         System.out.print("🔎 조회할 카테고리 번호를 입력하세요: ");
         int categoryId = sc.nextInt();
 
-        List<MenuVO> menuList = menuDao.getCategorySearchMenu(categoryId);
+        List<MenuVO> menuList = menuDao.getAllMenu(categoryId);
 
         System.out.println("\n📋 선택하신 카테고리의 메뉴 목록:");
         if (menuList.isEmpty()) {
