@@ -14,7 +14,7 @@ public class MenuDao {
     
     DBUtil du = new DBUtil();
     
-    public List<MenuVO> getAllMenu(int categoryId) {
+    public List<MenuVO> getCategorySearchMenu(int categoryId) {
         List<MenuVO> mList = new ArrayList<>();
         Connection con = null;
         try {
@@ -38,8 +38,31 @@ public class MenuDao {
         } finally {
             du.close(con);
         }
-
         return mList;
     }
+    
+    public List<MenuVO> getStringSearchMenu(String keyword){
+        List<MenuVO> mList = new ArrayList<>();
+        Connection con = null;
+        try {
+        	con = du.getConnection();
+        	String sql = "SELECT menu_name,menu_id,category_id, "
+        			+ " FROM menu WHERE REGEXP_LIKE ";
+        	
+        	
+            PreparedStatement pstmt = con.prepareStatement(sql); // ← 여기가 핵심
 
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+
+        }finally {
+            du.close(con);
+
+        }
+
+        
+        
+        return mList;
+    }
+    
 } 
