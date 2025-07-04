@@ -12,9 +12,10 @@ public class AdminView {
         	System.out.println("\n========================================\n");
             System.out.println("📋 관리자 메뉴\n");
             System.out.println("1. 작업자 관리");
-            System.out.println("2. 주문 관리");
-            System.out.println("3. 재료 관리");
-            System.out.println("4. 카테고리 관리");
+            System.out.println("2. 권한 관리");
+            System.out.println("3. 주문 관리");
+            System.out.println("4. 재료 관리");
+            System.out.println("5. 카테고리 관리");
             System.out.println("0. 로그아웃");
             System.out.println("\n========================================\n");
             System.out.print("메뉴 선택 ▶ ");
@@ -25,12 +26,15 @@ public class AdminView {
                     new StaffManageView().run();
                     break;
                 case 2:
-                    new OrderManageView().run();
+                    new RoleManageView().run();
                     break;
                 case 3:
-//                    new IngredientManageView().run();
+                    new OrderManageView().run();
                     break;
                 case 4:
+//                    new IngredientManageView().run();
+                    break;
+                case 5:
 //                    new CategoryManageView().run();
                     break;
                 case 0:
