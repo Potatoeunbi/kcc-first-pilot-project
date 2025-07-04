@@ -22,7 +22,7 @@ public class MenuDao {
 
         try {
             con = DBUtil.getConnection();
-            String sql = "SELECT menu_id, menu_name, category_id FROM menu WHERE category_id = ?";
+            String sql = "SELECT menu_id, menu_name, category_id, price FROM menu WHERE category_id = ? order by category_id";
             stmt = con.prepareStatement(sql);
             stmt.setInt(1, categoryId);
             rs = stmt.executeQuery();
@@ -32,6 +32,7 @@ public class MenuDao {
                 mvo.setMenuID(rs.getInt("menu_id"));
                 mvo.setMenuName(rs.getString("menu_name"));
                 mvo.setCategoryId(rs.getInt("category_id"));
+                mvo.setPrice(rs.getInt("price"));
                 list.add(mvo);
             }
 
@@ -53,9 +54,10 @@ public class MenuDao {
 
         try {
             con = DBUtil.getConnection();
-            String sql = "SELECT MENU_ID, MENU_NAME, CATEGORY_ID FROM MENU WHERE MENU_NAME LIKE ?";
+            String sql = "SELECT MENU_ID, MENU_NAME, CATEGORY_ID, PRICE FROM MENU WHERE MENU_NAME LIKE ?";
             stmt = con.prepareStatement(sql);
-            stmt.setString(1, "%" + keyword + "%");
+            stmt.setString(1, "%" + keyword + "%" );
+
             rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -63,6 +65,7 @@ public class MenuDao {
                 mvo.setMenuID(rs.getInt("MENU_ID"));
                 mvo.setMenuName(rs.getString("MENU_NAME"));
                 mvo.setCategoryId(rs.getInt("CATEGORY_ID"));
+                mvo.setPrice(rs.getInt("price"));
                 list.add(mvo);
             }
 
@@ -75,5 +78,6 @@ public class MenuDao {
         return list;
     }
 
+    	
     
 } 

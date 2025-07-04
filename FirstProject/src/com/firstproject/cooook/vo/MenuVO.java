@@ -7,4 +7,5 @@ public class MenuVO {
 		private int orderCount;
 		private String menuName;
 		private int categoryId;
+		private int price;
 }
