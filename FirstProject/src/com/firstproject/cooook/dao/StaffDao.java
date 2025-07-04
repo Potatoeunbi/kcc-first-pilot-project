@@ -101,7 +101,7 @@ public class StaffDao {
 		PreparedStatement stmt = null;
 		try {
 			con = DBUtil.getConnection();
-			String sql = "UPDATE staff SET deleted_at = sysdate WHERE email = ?";
+			String sql = "UPDATE "+tableName+" SET deleted_at = sysdate WHERE email = ?";
 			stmt = con.prepareStatement(sql);
 			stmt.setString(1, email);
 		    int affectedRows = stmt.executeUpdate();
@@ -130,7 +130,7 @@ public class StaffDao {
 					   + "       s.role_id 		AS roleId,"
 					   + "       r.role_name 		AS roleName,"
 					   + "       s.created_at 	AS createdAt "
-					   + " from staff s left join roles r on r.role_id = s.role_id "
+					   + " from "+tableName+" s left join roles r on r.role_id = s.role_id "
 					   + " where s.deletedAt is null ";
 			PreparedStatement stmt = con.prepareStatement(sql);
 			ResultSet rs = stmt.executeQuery();
@@ -163,7 +163,7 @@ public class StaffDao {
 
 	    try {
 	        con = DBUtil.getConnection();
-	        String sql = "SELECT * FROM staff WHERE email = ? AND password = ?";
+	        String sql = "SELECT * FROM "+tableName+" WHERE email = ? AND password = ?";
 	        stmt = con.prepareStatement(sql);
 	        stmt.setString(1, email);
 	        stmt.setString(2, PasswordUtil.hashPassword(inputPw)); // 입력 비밀번호를 해시해서 비교
