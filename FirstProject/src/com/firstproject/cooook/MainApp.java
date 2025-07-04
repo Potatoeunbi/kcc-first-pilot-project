@@ -12,6 +12,7 @@ public class MainApp {
 		LoginView loginView = new LoginView();
 		loginView.runLogin();
 
+
 	}
 	
 	private static void printBanner() {
@@ -35,10 +36,9 @@ public class MainApp {
 	    System.out.println(ANSI_GREEN + "		   🚀 재고 재고 재고! 관리 시스템! 🚀" + ANSI_RESET);
 	    System.out.println();
 	    
-//	    CategoryMain categoryMain = new CategoryMain();
-//	    categoryMain.runCategory();
-//	    MenuView mm = new MenuView();
-//	    mm.runMenu();
+
+	    MenuView mm = new MenuView();
+	    mm.runMenu();
 	}
 
 }

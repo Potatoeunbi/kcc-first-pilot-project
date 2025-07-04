@@ -191,17 +191,22 @@ public class StaffManageView {
     }
 
     private void printStaffAll() {
-    	List<StaffVO> staffList = staffDao.getStaffAll(); // 역할 목록 조회
+        List<StaffVO> staffList = staffDao.getStaffAll();
 
-    	System.out.println("\n\n┌────────────────────────── 작업자 목록 ──────────────────────────┐");
-    	for (StaffVO staff : staffList) {
-    	    System.out.printf("  %d: %s%s, %s, %s, %s, %s\n", staff.getStaffId(), staff.getFirstName()
-    	    		, staff.getLastName(), staff.getRoleName(), staff.getEmail(), staff.getPhone()
-    	    		, staff.getCreatedAt());
-    	}
-    	System.out.println("└──────────────────────────────────────────────────────────────┘");
+        System.out.println("\n============= [👤 전체 작업자 목록] =============\n");
+        for (StaffVO staff : staffList) {
+            System.out.printf("번호: %d | 이름: %s %s | 권한: %s | 이메일: %s | 전화번호: %s | 생성일: %s\n",
+                    staff.getStaffId(),
+                    staff.getFirstName(),
+                    staff.getLastName(),
+                    staff.getRoleName(),
+                    staff.getEmail(),
+                    staff.getPhone(),
+                    staff.getCreatedAt());
+        }
+        System.out.println("\n============================================\n");
     }
-    
+
     
     private void deleteStaff() {
         try {
