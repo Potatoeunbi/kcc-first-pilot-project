@@ -55,7 +55,6 @@ public class OrderManageView {
             System.out.print("total_price: ");
             order.setTotalPrice(Double.parseDouble(sc.nextLine()));
 
-            order.setOrderDate(new Date());
 
             System.out.print("status: ");
             order.setStatus(sc.nextLine());

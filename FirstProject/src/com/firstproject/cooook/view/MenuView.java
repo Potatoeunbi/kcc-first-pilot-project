@@ -1,4 +1,4 @@
-package com.firstproject.cooook;
+package com.firstproject.cooook.view;
 
 import java.util.List;
 import java.util.Scanner;
@@ -8,7 +8,7 @@ import com.firstproject.cooook.dao.MenuDao;
 import com.firstproject.cooook.vo.CategoryVO;
 import com.firstproject.cooook.vo.MenuVO;
 
-public class MenuMain {
+public class MenuView {
     Scanner sc = new Scanner(System.in);
     MenuDao mdao = new MenuDao();
     

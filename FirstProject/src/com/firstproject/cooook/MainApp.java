@@ -1,6 +1,7 @@
 package com.firstproject.cooook;
 
 import com.firstproject.cooook.view.LoginView;
+import com.firstproject.cooook.view.MenuView;
 
 public class MainApp {
 
@@ -36,7 +37,7 @@ public class MainApp {
 	    
 //	    CategoryMain categoryMain = new CategoryMain();
 //	    categoryMain.runCategory();
-	    MenuMain mm = new MenuMain();
+	    MenuView mm = new MenuView();
 	    mm.runMenu();
 	}
 
