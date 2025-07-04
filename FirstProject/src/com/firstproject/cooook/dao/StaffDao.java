@@ -180,14 +180,6 @@ public class StaffDao {
 				staff.setRoleId(rs.getInt("role_id"));
 				staff.setRoleName(rs.getString("role_name"));
 				staff.setCreatedAt(rs.getDate("created_at"));
-				
-//				StaffVO staff = dao.login(email, pw);
-//				if (staff != null) {
-//				    System.out.println("로그인 성공!");
-//				    Session.setCurrentUser(staff); // 로그인 정보 보관
-//				} else {
-//				    System.out.println("로그인 실패!");
-//				}
 	        }
 	        
 	    } catch (SQLException e) {
