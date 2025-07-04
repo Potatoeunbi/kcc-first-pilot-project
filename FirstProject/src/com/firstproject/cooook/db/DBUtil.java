@@ -14,7 +14,6 @@ public class DBUtil {
     static {
         try {
             Class.forName(DRIVER_CLASS_NAME);
-            System.out.println("드라이버가 로드되었습니다.");
         } catch (ClassNotFoundException e) {
             System.out.println("드라이버 로드 실패: " + e.getMessage());
         }
