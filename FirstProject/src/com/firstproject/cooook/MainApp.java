@@ -6,11 +6,11 @@ import com.firstproject.cooook.view.MenuView;
 public class MainApp {
 
 	public static void main(String[] args) {
-//		printBanner();
+		printBanner();
 		
-	    
-		LoginView loginView = new LoginView();
-		loginView.runLogin();
+//	    
+//		LoginView loginView = new LoginView();
+//		loginView.runLogin();
 
 	}
 	
