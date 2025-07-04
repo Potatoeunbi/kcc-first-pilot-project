@@ -61,14 +61,17 @@ public class MenuView {
                     System.out.println(m.getMenuID() + " | " + m.getMenuName() + "| 가격: " + m.getPrice());
                 }
             }
-            System.out.println("상세 정보 조회를 원하는 메뉴 번호를 입력하세요");
-            int detail = sc.nextInt();
-            sc.nextLine();
-            List<MenuIngredientVO> detailList = mdao.getAllMenuDetail(detail);  // 메뉴 ID로 상세 조회
-            for(MenuIngredientVO mvo : detailList) {
-            	System.out.println("여기까지 실험");
-            }
-            break;
+//            System.out.println("상세 정보 조회를 원하는 메뉴 번호를 입력하세요");
+//            int detail = sc.nextInt();
+//            sc.nextLine();
+//            List<MenuIngredientVO> detailList = mdao.getAllMenuDetail(detail);  // 메뉴 ID로 상세 조회
+//            for(MenuIngredientVO mvo : detailList) {
+//            	System.out.println("여기까지 실험");
+//            	System.out.println("메뉴 아이디: " + mvo.getMenuId());
+//            	System.out.println("메뉴 이름: " + mvo.getMenuName());
+//            	
+//            }
+//            break;
 
 
             case 2:

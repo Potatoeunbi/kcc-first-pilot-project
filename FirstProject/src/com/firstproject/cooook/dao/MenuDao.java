@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.firstproject.cooook.db.DBUtil;
 import com.firstproject.cooook.vo.IngredientVO;
+import com.firstproject.cooook.vo.MenuDetailVO;
 import com.firstproject.cooook.vo.MenuIngredientVO;
 import com.firstproject.cooook.vo.MenuVO;
 
@@ -78,46 +79,50 @@ public class MenuDao {
         return list;
     }
     
-    public List<MenuIngredientVO> getAllMenuDetail(int menu_id){
-        List<MenuIngredientVO> list = new ArrayList<>();
-        Connection con = null;
-        
-    	try {
-            con = DBUtil.getConnection();
-            String sql = "SELECT m.menu_id AS menu_id, m.menu_name, c.category_name,"
-                    + " i.ingredient_id AS ingredient_id, i.ingredient_name, i.ingredient_type,"
-                    + " mi.quantity_used "
-                    + " FROM Menu m "
-                    + " JOIN category c ON m.category_id = c.category_id "
-                    + " JOIN menu_ingredient mi ON m.menu_id = mi.menu_id "
-                    + " JOIN ingredient i ON mi.ingredient_id = i.ingredient_id "
-                    + " WHERE m.menu_id = ?";
-
-            PreparedStatement pstmt = con.prepareStatement(sql);
-            pstmt.setInt(1, menu_id);
-            ResultSet rs = pstmt.executeQuery();
-            while(rs.next()) {
-        		IngredientVO ivo = new IngredientVO(); 
-        		ivo.setIngredientId(rs.getInt("Ingredient_id"));
-        		ivo.setIngredientName(rs.getString("ingredient_name"));
-            	MenuIngredientVO mvo = new MenuIngredientVO();
-        		mvo.setMenuId(rs.getInt("menu_id"));
-        		mvo.setQuantityUsed(rs.getInt("quantity_used"));
-        		mvo.setIngredientId(rs.getInt("ingredient_id"));
-        		mvo.setIngredient(ivo);  
-        		list.add(mvo);
-//        		System.out.println("메뉴 ID: " + mvo.getMenuId() + 
-//        				", 재료명: " + ivo.getIngredientName() + 
-//        				", 수량: " + mvo.getQuantityUsed());
-            }
-            
-    	}catch(SQLException e){
-            System.out.println("상세 정보 조회 오류: " + e.getMessage());
-    	}finally {
-    		
-    	}
-    	return list;
-    }
+//    public List<MenuDetailVO> getAllMenuDetail(int menu_id){
+//        List<MenuDetailVO> list = new ArrayList<>();
+//        Connection con = null;
+//        
+//    	try {
+//            con = DBUtil.getConnection();
+//            String sql = "SELECT m.menu_id AS menu_id, m.menu_name, c.category_name,"
+//                    + " i.ingredient_id AS ingredient_id, i.ingredient_name, i.ingredient_type,"
+//                    + " mi.quantity_used "
+//                    + " FROM Menu m "
+//                    + " JOIN category c ON m.category_id = c.category_id "
+//                    + " JOIN menu_ingredient mi ON m.menu_id = mi.menu_id "
+//                    + " JOIN ingredient i ON mi.ingredient_id = i.ingredient_id "
+//                    + " WHERE m.menu_id = ?";
+//
+//            PreparedStatement pstmt = con.prepareStatement(sql);
+//            pstmt.setInt(1, menu_id);
+//            ResultSet rs = pstmt.executeQuery();
+//            while(rs.next()) {
+//        		IngredientVO ivo = new IngredientVO(); 
+//        		ivo.setIngredientId(rs.getInt("Ingredient_id"));
+//        		ivo.setIngredientName(rs.getString("ingredient_name"));
+//        		
+//        		MenuVO mvo = new MenuVO();
+//        		mvo.setMenuName(rs.getString("manu_name"));
+//        		
+//            	MenuIngredientVO mivo = new MenuIngredientVO();
+//        		mivo.setMenuId(rs.getInt("menu_id"));
+//        		mivo.setQuantityUsed(rs.getInt("quantity_used"));
+//        		mivo.setIngredientId(rs.getInt("ingredient_id"));
+//        		mivo.setIngredient(ivo);  
+//        		list.add(mivo);
+////        		System.out.println("메뉴 ID: " + mvo.getMenuId() + 
+////        				", 재료명: " + ivo.getIngredientName() + 
+////        				", 수량: " + mvo.getQuantityUsed());
+//            }
+//            
+//    	}catch(SQLException e){
+//            System.out.println("상세 정보 조회 오류: " + e.getMessage());
+//    	}finally {
+//    		
+//    	}
+//    	return list;
+//    }
     	
     public void insertMenu(MenuVO menu) {
         Connection con = null;

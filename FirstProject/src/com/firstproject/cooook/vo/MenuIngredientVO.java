@@ -7,6 +7,6 @@ public class MenuIngredientVO {
     private int menuId;
     private int ingredientId;
     private int quantityUsed;
-    private IngredientVO ingredient;
+    
 
 }
