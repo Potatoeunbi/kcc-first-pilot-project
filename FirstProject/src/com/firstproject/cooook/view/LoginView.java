@@ -43,11 +43,7 @@ public class LoginView {
         System.out.flush();
         System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n========================================");
         System.out.println("\n✅ 로그인 성공! " + loginStaff.getFirstName()+ loginStaff.getLastName() + "님 환영합니다!\n");
-        // 역할에 따라 메뉴 이동
-        if ("관리자".equals(loginStaff.getRoleName())) {
-            new AdminView().showMenu();
-        } else {
-            new WorkerView().showMenu();
-        }
+        
+        new MainView(loginStaff.getRoleName()).showMenu();
     }
 }

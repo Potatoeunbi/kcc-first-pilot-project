@@ -143,6 +143,8 @@ public class StaffManageView {
                 System.out.print("변경할 권한 번호 (Enter 생략): ");
                 try {
                     roleId = sc.nextLine();
+                    
+                    if (roleId.isEmpty()) break; 
 
                     for (RoleVO role : roleList) {
                         if (role.getRoleId() == Integer.parseInt(roleId)) {
@@ -154,7 +156,7 @@ public class StaffManageView {
                     if (!isValid) {
                         System.out.println("❌ 존재하지 않는 역할입니다. 다시 입력해주세요.");
                     }else {
-                    	if (!roleId.isEmpty()) staff.setRoleId(Integer.parseInt(roleId));
+                    	staff.setRoleId(Integer.parseInt(roleId));
                     }
                 } catch (NumberFormatException e) {
                     System.out.println("❌ 숫자로 입력해주세요.");

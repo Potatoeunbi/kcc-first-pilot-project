@@ -89,6 +89,8 @@ public class StaffDao {
 			    params.add(roleId);
 			}
 			
+			if(params.isEmpty()) return;
+			
 			String sql = "UPDATE " + tableName + " SET " + String.join(", ", setClauses) + " WHERE staff_id = ?";
 		    params.add(staff.getStaffId());
 
