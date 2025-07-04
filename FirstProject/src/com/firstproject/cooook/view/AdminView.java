@@ -35,7 +35,7 @@ public class AdminView {
 //                    new IngredientManageView().run();
                     break;
                 case 5:
-//                    new CategoryManageView().run();
+                    new CategoryView().showMenu();
                     break;
                 case 0:
                     System.out.println("🔒 로그아웃 되었습니다.");
