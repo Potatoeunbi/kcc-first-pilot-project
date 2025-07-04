@@ -22,8 +22,8 @@ public class StaffDao {
 			String sql = 
 					"insert"
 					+ " into "+tableName
-					+ " values "
-					+ "(?, ?, ?, ?, ?, ?)";
+					+ " (first_name, last_name, email, password, phone, role_id)"
+					+ " VALUES (?, ?, ?, ?, ?, ?)";
 			PreparedStatement stmt = con.prepareStatement(sql);
 			stmt.setString(1, staff.getFirstName());
 			stmt.setString(2, staff.getLastName());
@@ -52,8 +52,10 @@ public class StaffDao {
 			
 			String firstName = staff.getFirstName();
 			String lastName = staff.getLastName();
+			String email = staff.getEmail();
 			String password = staff.getPassword();
 			String phone = staff.getPhone();
+			int roleId = staff.getRoleId();
 			
 			
 			if(firstName != null) {
@@ -67,6 +69,11 @@ public class StaffDao {
 				params.add(lastName);
 			}
 			
+			if(email != null) {
+				setClauses.add("email = ?");
+				params.add(email);
+			}
+			
 			if (password != null) {
 			    setClauses.add("password = ?");
 			    params.add(password);
@@ -75,6 +82,11 @@ public class StaffDao {
 			if (phone != null) {
 			    setClauses.add("phone = ?");
 			    params.add(phone);
+			}
+			
+			if (roleId != 0) {
+			    setClauses.add("role_id = ?");
+			    params.add(roleId);
 			}
 			
 			String sql = "UPDATE " + tableName + " SET " + String.join(", ", setClauses) + " WHERE staff_id = ?";
@@ -96,20 +108,15 @@ public class StaffDao {
 	}
 	
 	
-	public void softDeleteStaff(String email) {
+	public int softDeleteStaff(int staffId) {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		try {
 			con = DBUtil.getConnection();
-			String sql = "UPDATE "+tableName+" SET deleted_at = sysdate WHERE email = ?";
+			String sql = "UPDATE "+tableName+" SET deleted_at = sysdate WHERE staff_id = ?";
 			stmt = con.prepareStatement(sql);
-			stmt.setString(1, email);
-		    int affectedRows = stmt.executeUpdate();
-		    if (affectedRows == 0) {
-	            System.out.println("회원정보가 삭제되지 않았습니다. 이메일을 확인하세요.");
-	        } else {
-	            System.out.println("삭제가 완료되었습니다.");
-	        }
+			stmt.setInt(1, staffId);
+		    return stmt.executeUpdate();
 		}catch(SQLException e) {
 			throw new RuntimeException(e);
 		}finally {
@@ -131,19 +138,19 @@ public class StaffDao {
 					   + "       r.role_name 		AS roleName,"
 					   + "       s.created_at 	AS createdAt "
 					   + " from "+tableName+" s left join roles r on r.role_id = s.role_id "
-					   + " where s.deletedAt is null ";
+					   + " where s.deleted_at is null ";
 			PreparedStatement stmt = con.prepareStatement(sql);
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
 				StaffVO staff = new StaffVO();
-				staff.setStaffId(rs.getInt("staff_id"));
+				staff.setStaffId(rs.getInt("staffId"));
 				staff.setFirstName(rs.getString("firstName"));
 				staff.setLastName(rs.getString("lastName"));
 				staff.setEmail(rs.getString("email"));
 				staff.setPhone(rs.getString("phone"));
-				staff.setRoleId(rs.getInt("role_id"));
-				staff.setRoleName(rs.getString("role_name"));
-				staff.setCreatedAt(rs.getDate("created_at"));
+				staff.setRoleId(rs.getInt("roleId"));
+				staff.setRoleName(rs.getString("roleName"));
+				staff.setCreatedAt(rs.getDate("createdAt"));
 				staffList.add(staff);
 			}
 		}catch(SQLException e) {
@@ -163,7 +170,16 @@ public class StaffDao {
 
 	    try {
 	        con = DBUtil.getConnection();
-	        String sql = "SELECT * FROM "+tableName+" WHERE email = ? AND password = ?";
+			String sql = "SELECT s.staff_id 		AS staffId,"
+					   + "       s.first_name 	AS firstName,"
+					   + "       s.last_name 		AS lastName,"
+					   + "       s.email 			AS email,"
+					   + "       s.phone 			AS phone,"
+					   + "       s.role_id 		AS roleId,"
+					   + "       r.role_name 		AS roleName,"
+					   + "       s.created_at 	AS createdAt "
+					   + " from "+tableName+" s left join roles r on r.role_id = s.role_id "
+					   + " WHERE email = ? AND password = ?";
 	        stmt = con.prepareStatement(sql);
 	        stmt.setString(1, email);
 	        stmt.setString(2, PasswordUtil.hashPassword(inputPw)); // 입력 비밀번호를 해시해서 비교
@@ -172,14 +188,14 @@ public class StaffDao {
 
 	        if (rs.next()) {
 	            staff = new StaffVO();
-	    		staff.setStaffId(rs.getInt("staff_id"));
+	    		staff.setStaffId(rs.getInt("staffId"));
 				staff.setFirstName(rs.getString("firstName"));
 				staff.setLastName(rs.getString("lastName"));
 				staff.setEmail(rs.getString("email"));
 				staff.setPhone(rs.getString("phone"));
-				staff.setRoleId(rs.getInt("role_id"));
-				staff.setRoleName(rs.getString("role_name"));
-				staff.setCreatedAt(rs.getDate("created_at"));
+				staff.setRoleId(rs.getInt("roleId"));
+				staff.setRoleName(rs.getString("roleName"));
+				staff.setCreatedAt(rs.getDate("createdAt"));
 	        }
 	        
 	    } catch (SQLException e) {
