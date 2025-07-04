@@ -55,6 +55,7 @@ public class RoleDao {
 				params.add(description);
 			}
 			
+			if(params.isEmpty()) return;
 			
 			String sql = "UPDATE " + tableName + " SET " + String.join(", ", setClauses) + " WHERE role_id = ?";
 			params.add(role.getRoleId());
