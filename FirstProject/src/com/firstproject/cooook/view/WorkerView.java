@@ -16,7 +16,7 @@ public class WorkerView {
             System.out.println("4. 내정보 관리");
             System.out.println("0. 로그아웃");
 
-            System.out.print("메뉴 선택: ");
+            System.out.print("메뉴 선택 ▶ ");
             int choice = Integer.parseInt(sc.nextLine());
 
             switch (choice) {

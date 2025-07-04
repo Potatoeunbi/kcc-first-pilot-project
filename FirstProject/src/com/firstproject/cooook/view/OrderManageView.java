@@ -19,7 +19,7 @@ public class OrderManageView {
             System.out.println("2. 주문 수정");
             System.out.println("3. 주문 삭제");
             System.out.println("0. 뒤로가기");
-            System.out.print("입력 ▶ ");
+            System.out.print("메뉴 선택 ▶ ");
             String input = sc.nextLine();
 
             switch (input) {
