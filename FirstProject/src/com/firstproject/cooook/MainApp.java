@@ -8,9 +8,9 @@ public class MainApp {
 	public static void main(String[] args) {
 		printBanner();
 		
-//	    
-//		LoginView loginView = new LoginView();
-//		loginView.runLogin();
+	    
+		LoginView loginView = new LoginView();
+		loginView.runLogin();
 
 	}
 	
@@ -37,8 +37,8 @@ public class MainApp {
 	    
 //	    CategoryMain categoryMain = new CategoryMain();
 //	    categoryMain.runCategory();
-	    MenuView mm = new MenuView();
-	    mm.runMenu();
+//	    MenuView mm = new MenuView();
+//	    mm.runMenu();
 	}
 
 }
