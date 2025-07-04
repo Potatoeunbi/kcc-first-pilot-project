@@ -28,7 +28,7 @@ public class StaffDao {
 			stmt.setString(1, staff.getFirstName());
 			stmt.setString(2, staff.getLastName());
 			stmt.setString(3, staff.getEmail());
-			stmt.setString(4, PasswordUtil.hashPassword(staff.getPassword()));
+			stmt.setString(4, staff.getPassword());
 			stmt.setString(5, staff.getPhone());
 			stmt.setInt(6, staff.getRoleId());
 			stmt.executeUpdate();
@@ -138,7 +138,7 @@ public class StaffDao {
 					   + "       r.role_name 		AS roleName,"
 					   + "       s.created_at 	AS createdAt "
 					   + " from "+tableName+" s left join roles r on r.role_id = s.role_id "
-					   + " where s.deleted_at is null ";
+					   + " where s.deleted_at is null order by s.staff_id";
 			PreparedStatement stmt = con.prepareStatement(sql);
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
@@ -179,7 +179,7 @@ public class StaffDao {
 					   + "       r.role_name 		AS roleName,"
 					   + "       s.created_at 	AS createdAt "
 					   + " from "+tableName+" s left join roles r on r.role_id = s.role_id "
-					   + " WHERE email = ? AND password = ?";
+					   + " WHERE email = ? AND password = ? order by staff_id";
 	        stmt = con.prepareStatement(sql);
 	        stmt.setString(1, email);
 	        stmt.setString(2, PasswordUtil.hashPassword(inputPw)); // 입력 비밀번호를 해시해서 비교
