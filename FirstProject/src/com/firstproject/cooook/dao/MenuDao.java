@@ -77,7 +77,35 @@ public class MenuDao {
 
         return list;
     }
+    
+    public List<MenuVO> getMenuDetail(){
+        List<MenuVO> list = new ArrayList<>();
 
     	
+    	return list;
+    }
+    	
+    public void insertMenu(MenuVO menu) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            con = DBUtil.getConnection();
+
+            String sql = "INSERT INTO menu (menu_name, category_id, price) VALUES (?, ?, ?)";
+            pstmt = con.prepareStatement(sql);
+
+            pstmt.setString(1, menu.getMenuName());
+            pstmt.setInt(2, menu.getCategoryId());
+            pstmt.setInt(3, menu.getPrice());
+
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            DBUtil.close(con, pstmt, null);
+        }
+    }
+
     
 } 
