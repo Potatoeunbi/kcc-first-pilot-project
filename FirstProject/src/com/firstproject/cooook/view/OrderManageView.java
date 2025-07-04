@@ -1,35 +1,40 @@
 package com.firstproject.cooook.view;
 
+import java.util.List;
 import java.util.Scanner;
 
+import com.firstproject.cooook.common.Session;
 import com.firstproject.cooook.dao.OrderDao;
 import com.firstproject.cooook.vo.OrderVO;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.firstproject.cooook.vo.StaffVO;
 
 public class OrderManageView {
-    private Scanner sc = new Scanner(System.in);
-    private OrderDao orderDao = new OrderDao();
+    private final Scanner sc = new Scanner(System.in);
+    private final OrderDao orderDao = new OrderDao();
 
     public void run() {
         while (true) {
-            System.out.println("\n=== [📦 주문 관리] ===");
-            System.out.println("1. 주문 추가");
-            System.out.println("2. 주문 수정");
-            System.out.println("3. 주문 삭제");
+            System.out.println("\n\n============= [📦 주문 관리] =============");
+            System.out.println("1. 주문 목록 보기");
+            System.out.println("2. 주문 추가");
+            System.out.println("3. 주문 수정");
+            System.out.println("4. 주문 삭제");
             System.out.println("0. 뒤로가기");
+            System.out.println("========================================");
             System.out.print("메뉴 선택 ▶ ");
-            String input = sc.nextLine();
 
+            String input = sc.nextLine();
             switch (input) {
                 case "1":
-                    insertOrder();
+                    printOrderAll();
                     break;
                 case "2":
-                    updateOrder();
+                    insertOrder();
                     break;
                 case "3":
+                    updateOrder();
+                    break;
+                case "4":
                     deleteOrder();
                     break;
                 case "0":
@@ -40,36 +45,36 @@ public class OrderManageView {
         }
     }
 
+    private void printOrderAll() {
+        List<OrderVO> orders = orderDao.getAllOrders();
+        System.out.println("\n============= [📦 주문 목록] =============");
+        for (OrderVO o : orders) {
+            System.out.printf("번호: %d | 직원명 : %s | 메뉴명: %s | 수량: %d | 총액: %d | 주문일: %s\n",
+                    o.getOrderId(), o.getStaffName(), o.getMenuName(),
+                    o.getQuantity(), o.getTotalPrice(), o.getCreatedAt());
+        }
+        System.out.println("========================================");
+    }
+
     private void insertOrder() {
         try {
-            OrderVO order = new OrderVO();
-            System.out.print("user_id: ");
-            order.setUserId(Integer.parseInt(sc.nextLine()));
+            OrderVO o = new OrderVO();
+            StaffVO staff = Session.getCurrentUser();
+            
+            System.out.println("\n============= [📦 주문 추가] =============");
+            o.setStaffId(staff.getStaffId());
 
-            System.out.print("product_id: ");
-            order.setProductId(Integer.parseInt(sc.nextLine()));
+            System.out.print("메뉴 번호: ");
+            o.setMenuId(Integer.parseInt(sc.nextLine()));
 
-            System.out.print("quantity: ");
-            order.setQuantity(Integer.parseInt(sc.nextLine()));
+            System.out.print("수량: ");
+            o.setQuantity(Integer.parseInt(sc.nextLine()));
 
-            System.out.print("total_price: ");
-            order.setTotalPrice(Double.parseDouble(sc.nextLine()));
+            System.out.print("총 금액: ");
+            o.setTotalPrice(Integer.parseInt(sc.nextLine()));
 
-
-            System.out.print("status: ");
-            order.setStatus(sc.nextLine());
-
-            System.out.print("shipping address: ");
-            order.setShippingAddr(sc.nextLine());
-
-            System.out.print("payment method: ");
-            order.setPaymentMethod(sc.nextLine());
-
-            System.out.print("staff_id: ");
-            order.setStaffId(Integer.parseInt(sc.nextLine()));
-
-            orderDao.insertOrder(order);
-            System.out.println("✅ 주문 등록 완료!");
+            orderDao.insertOrder(o);
+            System.out.println("✅ 주문이 추가되었습니다.");
         } catch (Exception e) {
             System.out.println("❌ 입력 오류: " + e.getMessage());
         }
@@ -77,37 +82,69 @@ public class OrderManageView {
 
     private void updateOrder() {
         try {
-            OrderVO order = new OrderVO();
+            System.out.println("\n============= [📦 주문 수정] =============");
+            System.out.print("수정할 주문 번호: ");
+            int orderId = Integer.parseInt(sc.nextLine());
+            OrderVO o = new OrderVO();
+            
+            if(checkIsOrder(orderId)) {
+           	 	o.setOrderId(orderId);
+            }else {
+            	System.out.println("❌ 수정 실패: 올바르지 않은 주문 번호입니다.");
+            	return;
+            }
+            
+           
+            o.setOrderId(orderId);
 
-            System.out.print("수정할 order_id: ");
-            order.setOrderId(Integer.parseInt(sc.nextLine()));
-
-            System.out.print("수정할 quantity (Enter 생략): ");
+            System.out.print("변경할 수량 (Enter 생략): ");
             String qty = sc.nextLine();
-            if (!qty.isEmpty()) order.setQuantity(Integer.parseInt(qty));
+            if (!qty.isEmpty()) o.setQuantity(Integer.parseInt(qty));
 
-            System.out.print("수정할 status (Enter 생략): ");
-            String status = sc.nextLine();
-            if (!status.isEmpty()) order.setStatus(status);
+            System.out.print("변경할 총 금액 (Enter 생략): ");
+            String price = sc.nextLine();
+            if (!price.isEmpty()) o.setTotalPrice(Integer.parseInt(price));
 
-            System.out.print("수정할 배송주소 (Enter 생략): ");
-            String addr = sc.nextLine();
-            if (!addr.isEmpty()) order.setShippingAddr(addr);
-
-            orderDao.updateOrder(order);
-            System.out.println("✅ 주문 수정 완료!");
+            orderDao.updateOrder(o);
+            System.out.println("✅ 주문이 수정되었습니다.");
         } catch (Exception e) {
-            System.out.println("❌ 수정 실패: " + e.getMessage());
+            System.out.println("❌ 수정 오류: " + e.getMessage());
         }
     }
 
     private void deleteOrder() {
         try {
-            System.out.print("삭제할 order_id: ");
-            int id = Integer.parseInt(sc.nextLine());
-            orderDao.softDeleteOrder(id);
+            System.out.println("\n============= [📦 주문 삭제] =============");
+            System.out.print("삭제할 주문 번호: ");
+            int orderId = Integer.parseInt(sc.nextLine());
+            
+            
+            if(!checkIsOrder(orderId)) {
+            	System.out.println("❌ 수정 실패: 올바르지 않은 주문 번호입니다.");
+            	return;
+            }
+            
+
+            int affected = orderDao.softDeleteOrder(orderId);
+            if (affected > 0) {
+                System.out.println("✅ 주문이 삭제되었습니다.");
+            } else {
+                System.out.println("❌ 해당 번호의 주문이 없습니다.");
+            }
         } catch (Exception e) {
-            System.out.println("❌ 삭제 실패: " + e.getMessage());
+            System.out.println("❌ 삭제 오류: " + e.getMessage());
         }
+    }
+    
+    private boolean checkIsOrder(int orderId) {
+    	boolean isValid = false;
+    	List<OrderVO> orderList = orderDao.getAllOrders();
+        for (OrderVO order : orderList) {
+            if (order.getOrderId() == orderId) {
+                isValid = true;
+                break;
+            }
+        }
+        return isValid;
     }
 }

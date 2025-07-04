@@ -1,11 +1,7 @@
 package com.firstproject.cooook.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.*;
+import java.util.*;
 
 import com.firstproject.cooook.db.DBUtil;
 import com.firstproject.cooook.vo.OrderVO;
@@ -20,18 +16,14 @@ public class OrderDao {
 
         try {
             con = DBUtil.getConnection();
-            String sql = "INSERT INTO " + tableName + " (user_id, product_id, quantity, total_price, order_date, status, shipping_addr, payment_method, staff_id) " +
-                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO " + tableName +
+                         " (staff_id, menu_id, quantity, total_price, created_at) " +
+                         "VALUES (?, ?, ?, ?, sysdate)";
             stmt = con.prepareStatement(sql);
-            stmt.setInt(1, order.getUserId());
-            stmt.setInt(2, order.getProductId());
+            stmt.setInt(1, order.getStaffId());
+            stmt.setInt(2, order.getMenuId());
             stmt.setInt(3, order.getQuantity());
-            stmt.setDouble(4, order.getTotalPrice());
-            stmt.setDate(5, new java.sql.Date(order.getOrderDate().getTime()));
-            stmt.setString(6, order.getStatus());
-            stmt.setString(7, order.getShippingAddr());
-            stmt.setString(8, order.getPaymentMethod());
-            stmt.setInt(9, order.getStaffId());
+            stmt.setInt(4, order.getTotalPrice());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -53,13 +45,13 @@ public class OrderDao {
             List<String> setClauses = new ArrayList<>();
             List<Object> params = new ArrayList<>();
 
-            if (order.getUserId() != 0) {
-                setClauses.add("user_id = ?");
-                params.add(order.getUserId());
+            if (order.getStaffId() != 0) {
+                setClauses.add("staff_id = ?");
+                params.add(order.getStaffId());
             }
-            if (order.getProductId() != 0) {
-                setClauses.add("product_id = ?");
-                params.add(order.getProductId());
+            if (order.getMenuId() != 0) {
+                setClauses.add("menu_id = ?");
+                params.add(order.getMenuId());
             }
             if (order.getQuantity() != 0) {
                 setClauses.add("quantity = ?");
@@ -69,29 +61,13 @@ public class OrderDao {
                 setClauses.add("total_price = ?");
                 params.add(order.getTotalPrice());
             }
-            if (order.getOrderDate() != null) {
-                setClauses.add("order_date = ?");
-                params.add(new java.sql.Date(order.getOrderDate().getTime()));
-            }
-            if (order.getStatus() != null) {
-                setClauses.add("status = ?");
-                params.add(order.getStatus());
-            }
-            if (order.getShippingAddr() != null) {
-                setClauses.add("shipping_addr = ?");
-                params.add(order.getShippingAddr());
-            }
-            if (order.getPaymentMethod() != null) {
-                setClauses.add("payment_method = ?");
-                params.add(order.getPaymentMethod());
-            }
-            if (order.getStaffId() != 0) {
-                setClauses.add("staff_id = ?");
-                params.add(order.getStaffId());
+            if (order.getCreatedAt() != null) {
+                setClauses.add("created_at = ?");
+                params.add(new java.sql.Date(order.getCreatedAt().getTime()));
             }
 
             if (setClauses.isEmpty()) {
-                System.out.println("수정할 항목이 없습니다.");
+                System.out.println("❗ 수정할 항목이 없습니다.");
                 return;
             }
 
@@ -113,7 +89,7 @@ public class OrderDao {
     }
 
     // 논리 삭제
-    public void softDeleteOrder(int orderId) {
+    public int softDeleteOrder(int orderId) {
         Connection con = null;
         PreparedStatement stmt = null;
 
@@ -122,12 +98,7 @@ public class OrderDao {
             String sql = "UPDATE " + tableName + " SET deleted_at = sysdate WHERE order_id = ?";
             stmt = con.prepareStatement(sql);
             stmt.setInt(1, orderId);
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows == 0) {
-                System.out.println("주문 삭제 실패: ID를 확인하세요.");
-            } else {
-                System.out.println("주문이 정상적으로 삭제 처리되었습니다.");
-            }
+            return stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
@@ -145,25 +116,28 @@ public class OrderDao {
 
         try {
             con = DBUtil.getConnection();
-            String sql = "SELECT * FROM " + tableName + " WHERE deleted_at IS NULL";
+            String sql = "SELECT o.*, s.first_name||s.last_name as staff_name,"
+            		+ "	m.menu_name"
+            		+ " FROM " + tableName + " o "
+            		+ " left join staff s on s.staff_id = o.staff_id"
+            		+ " left join menu m on m.menu_id = o.menu_id"
+            		+ " WHERE o.deleted_at IS NULL order by o.order_id";
             stmt = con.prepareStatement(sql);
             rs = stmt.executeQuery();
 
             while (rs.next()) {
                 OrderVO order = new OrderVO();
                 order.setOrderId(rs.getInt("order_id"));
-                order.setUserId(rs.getInt("user_id"));
-                order.setProductId(rs.getInt("product_id"));
-                order.setQuantity(rs.getInt("quantity"));
-                order.setTotalPrice(rs.getDouble("total_price"));
-                order.setOrderDate(rs.getDate("order_date"));
-                order.setStatus(rs.getString("status"));
-                order.setShippingAddr(rs.getString("shipping_addr"));
-                order.setPaymentMethod(rs.getString("payment_method"));
                 order.setStaffId(rs.getInt("staff_id"));
+                order.setStaffName(rs.getString("staff_name"));
+                order.setMenuId(rs.getInt("menu_id"));
+                order.setMenuName(rs.getString("menu_name"));
+                order.setQuantity(rs.getInt("quantity"));
+                order.setTotalPrice(rs.getInt("total_price"));
+                order.setCreatedAt(rs.getDate("created_at"));
+                order.setDeletedAt(rs.getDate("deleted_at"));
                 list.add(order);
             }
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {

@@ -63,7 +63,8 @@ public class StaffManageView {
             staff.setEmail(sc.nextLine());
 
             System.out.print("비밀번호: ");
-            staff.setPassword(PasswordUtil.hashPassword(sc.nextLine()));
+            
+            staff.setPassword(PasswordUtil.hashPassword(sc.nextLine().trim()));
 
             System.out.print("전화번호: ");
             staff.setPhone(sc.nextLine());
