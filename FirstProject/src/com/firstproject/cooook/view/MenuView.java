@@ -1,18 +1,26 @@
 package com.firstproject.cooook.view;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import com.firstproject.cooook.dao.CategoryDao;
 import com.firstproject.cooook.dao.MenuDao;
+import com.firstproject.cooook.db.DBUtil;
 import com.firstproject.cooook.vo.CategoryVO;
-import com.firstproject.cooook.vo.MenuIngredientVO;
+import com.firstproject.cooook.vo.MenuCategoryVO;
 import com.firstproject.cooook.vo.MenuVO;
+import com.firstproject.cooook.vo.UpdateMenuVO;
 
 public class MenuView {
     Scanner sc = new Scanner(System.in);
     MenuDao mdao = new MenuDao();
-    
+    CategoryDao cdao = new CategoryDao();
+
     private void printCategoryTree(List<CategoryVO> list, String prefix) {
         for (CategoryVO c : list) {
             System.out.println(prefix + "▶ ID: " + c.getCategoryId() + " | 이름: " + c.getCategoryName());
@@ -21,7 +29,28 @@ public class MenuView {
             }
         }
     }
-    
+
+    private void printCategoryWithMenu(List<CategoryVO> categories, String indent) {
+        for (CategoryVO c : categories) {
+            System.out.println(indent + "📁 " + c.getCategoryName());
+
+            List<MenuVO> menus = mdao.getMenuByCategoryId(c.getCategoryId());
+            if (menus.isEmpty()) {
+                System.out.println(indent + "   (해당 카테고리에 메뉴가 존재하지 않습니다)");
+            } else {
+                for (MenuVO m : menus) {
+                    System.out.println(indent + "   └ 🍽️ ID: " + m.getMenuId()
+                        + " | 이름: " + m.getMenuName()
+                        + " | 가격: " + m.getPrice() + "원");
+                }
+            }
+
+            if (c.getChild() != null && !c.getChild().isEmpty()) {
+                printCategoryWithMenu(c.getChild(), indent + "    ");
+            }
+        }
+    }
+
     private void printLeafCategories(List<CategoryVO> list, String prefix) {
         for (CategoryVO c : list) {
             if (c.getChild() == null || c.getChild().isEmpty()) {
@@ -31,93 +60,186 @@ public class MenuView {
             }
         }
     }
+
+    
+    
     public void runMenu() {
-        System.out.println("\n🔍 원하시는 검색 기능을 선택하세요");
-        System.out.println("1. 카테고리별 메뉴 검색");
-        System.out.println("2. 메뉴 이름 키워드 검색");
-        System.out.println("3. 메뉴 등록");
-        System.out.print("선택 > ");
-        int choice = sc.nextInt();
-        sc.nextLine();  
-
-        switch (choice) {
-        case 1:
-            CategoryDao cdao = new CategoryDao();
-            List<CategoryVO> tree = cdao.selectCategory();  
-
-            System.out.println("📁 카테고리 목록 (트리 구조):");
-            printCategoryTree(tree, "");  
-
-            System.out.print("\n📥 검색을 원하는 하위 카테고리 번호를 입력하세요 > ");
-            int search = sc.nextInt();
+        while (true) {
+            System.out.println("\n🔍 원하시는 검색 기능을 선택하세요");
+            System.out.println("1. 카테고리별 메뉴 검색");
+            System.out.println("2. 메뉴 이름 키워드 검색");
+            System.out.println("3. 메뉴 등록");
+            System.out.println("4. 메뉴 삭제");
+            System.out.println("5. 메뉴 업데이트");
+            System.out.println("9. 전체 카테고리 + 메뉴 트리 보기");
+            System.out.println("0. 종료");
+            System.out.print("선택 > ");
+            int choice = sc.nextInt();
             sc.nextLine();
 
-            List<MenuVO> mList = mdao.getCategorySearchMenu(search);
-            System.out.println("\n📋 [해당 카테고리의 메뉴 목록]");
-            if (mList.isEmpty()) {
-                System.out.println("❌ 해당 카테고리에 등록된 메뉴가 없습니다.");
-            } else {
-                for (MenuVO m : mList) {
-                    System.out.println(m.getMenuID() + " | " + m.getMenuName() + "| 가격: " + m.getPrice());
+            switch (choice) {
+                case 1 -> searchMenuByCategoryTree();    
+                case 2 -> searchMenuByKeyword();
+                case 3 -> insertMenu();
+                case 4 -> deleteMenu();
+                case 5 -> updateMenu();
+                case 9 -> printCategoryWithMenu(cdao.selectCategory(), ""); 
+                case 0 -> {
+                    System.out.println("종료합니다.");
+                    return;
                 }
+                default -> System.out.println("잘못된 선택입니다.");
             }
-//            System.out.println("상세 정보 조회를 원하는 메뉴 번호를 입력하세요");
-//            int detail = sc.nextInt();
-//            sc.nextLine();
-//            List<MenuIngredientVO> detailList = mdao.getAllMenuDetail(detail);  // 메뉴 ID로 상세 조회
-//            for(MenuIngredientVO mvo : detailList) {
-//            	System.out.println("여기까지 실험");
-//            	System.out.println("메뉴 아이디: " + mvo.getMenuId());
-//            	System.out.println("메뉴 이름: " + mvo.getMenuName());
-//            	
-//            }
-//            break;
+        }
+        
+    }
+    private void searchMenuByCategoryTree() {
+        List<CategoryVO> tree = cdao.selectCategory(); 
+        printCategoryTree(tree, "");
 
+        System.out.print("\n검색을 원하는 카테고리 ID를 입력하세요 > ");
+        int selectedId = sc.nextInt();
+        sc.nextLine();
 
-            case 2:
-                System.out.print("🔤 검색할 키워드를 입력하세요: ");
-                String keyword = sc.nextLine();
+        CategoryVO root = findCategoryById(tree, selectedId);
+        if (root == null) {
+            System.out.println("❌ 존재하지 않는 카테고리입니다.");
+            return;
+        }
 
-                List<MenuVO> searchList = mdao.getStringSearchMenu(keyword);
-                System.out.println("\n🔎 [이름 검색 결과]");
-                for (MenuVO m : searchList) {
-                    System.out.println(m.getMenuID() + " | " + m.getMenuName() + "| 가격: " + m.getPrice());
-                }
-                break;
-            case 3:
-                System.out.println("📥 메뉴 등록을 시작합니다.");
+        System.out.println("\n🔍 선택한 카테고리의 메뉴 트리");
+        printCategoryWithMenu(List.of(root), "");
+    }
 
-                // 전체 카테고리 트리 불러옴
-                CategoryDao cdao3 = new CategoryDao();
-                List<CategoryVO> mlist = cdao3.selectCategory();
+    private CategoryVO findCategoryById(List<CategoryVO> list, int targetId) {
+        for (CategoryVO c : list) {
+            if (c.getCategoryId() == targetId) return c;
+            if (c.getChild() != null) {
+                CategoryVO found = findCategoryById(c.getChild(), targetId);
+                if (found != null) return found;
+            }
+        }
+        return null;
+    }
 
-                System.out.println("\n📁 [하위 카테고리 목록]");
-                printLeafCategories(mlist, "  ");  // 하위만 출력
+    private void searchMenuByKeyword() {
+        System.out.print("검색할 키워드 입력 > ");
+        String keyword = sc.nextLine();
 
-                System.out.print("\n✅ 등록할 하위 카테고리 ID 입력 > ");
-                int subId = sc.nextInt();
-                sc.nextLine();
+        List<MenuVO> menus = mdao.getStringSearchMenu(keyword);
+        if (menus.isEmpty()) {
+            System.out.println("해당 키워드를 포함하는 메뉴가 없습니다.");
+        } else {
+            System.out.println("\n🔍 검색 결과");
+            for (MenuVO menu : menus) {
+                System.out.println("- 메뉴 ID: " + menu.getMenuId() + ", 이름: " + menu.getMenuName() + ", 가격: " + menu.getPrice());
+            }
+        }
+    }
+    
+    private void deleteMenu() {
+    	printCategoryWithMenu(cdao.selectCategory(), ""); 
+        System.out.print("삭제할 메뉴 ID 입력 > ");
+        int menuId = Integer.parseInt(sc.nextLine());
 
-                System.out.print("🍽️ 메뉴 이름: ");
-                String name = sc.nextLine();
+        System.out.print("정말 삭제하시겠습니까? (y/n) > ");
+        String confirm = sc.nextLine();
 
-                System.out.print("💰 가격: ");
-                int price = sc.nextInt();
-                sc.nextLine();
-
-                MenuVO menu = new MenuVO();
-                menu.setMenuName(name);
-                menu.setCategoryId(subId);
-                menu.setPrice(price);
-
-                mdao.insertMenu(menu);
-                System.out.println("✅ 메뉴가 성공적으로 등록되었습니다.");
-                break;
-
-            default:
-                System.out.println("❌ 잘못된 입력입니다.");
+        if (confirm.equalsIgnoreCase("y")) {
+            mdao.deleteMenu(menuId);
+        } else {
+            System.out.println("삭제가 취소되었습니다.");
         }
     }
 
 
+    public void insertMenu() {
+        System.out.print("메뉴 이름: ");
+        String name = sc.nextLine();
+        System.out.print("가격: ");
+        int price = Integer.parseInt(sc.nextLine());
+
+        List<CategoryVO> categories = cdao.selectCategory(); 
+        System.out.println("카테고리 목록:");
+        printCategoryTree(categories, "  ");
+
+        System.out.print("카테고리 ID들 (쉼표로 구분) 입력 > ");
+        String[] inputs = sc.nextLine().split(",");
+        List<Integer> categoryIds = new ArrayList<>();
+        for (String input : inputs) {
+            categoryIds.add(Integer.parseInt(input.trim()));
+        }
+
+        MenuVO menu = new MenuVO();
+        menu.setMenuName(name);
+        menu.setPrice(price);
+        menu.setCategoryIds(categoryIds);
+
+        mdao.insertMenu(menu);
+        System.out.println("✅ 메뉴가 등록되었습니다.");
+    }
+
+ 
+    public void updateMenu() {
+
+        System.out.println("📋 전체 카테고리 및 메뉴 트리:");
+        printCategoryWithMenu(cdao.selectCategory(), ""); 
+
+        System.out.print("수정할 메뉴 ID 입력 > ");
+        int menuId = Integer.parseInt(sc.nextLine());
+
+        UpdateMenuVO detail = mdao.selectMenuDetailById(menuId);
+        if (detail == null) {
+            System.out.println("❌ 해당 메뉴가 존재하지 않습니다.");
+            System.out.println("※ 메뉴 ID는 '🍽️' 아이콘 옆에 있는 숫자입니다.");
+            return;
+        }
+
+        UpdateMenuVO update = new UpdateMenuVO();
+        update.setMenuId(menuId);
+
+        System.out.print("새 이름 입력 (그대로면 엔터): ");
+        String name = sc.nextLine();
+        if (!name.isEmpty()) update.setMenuName(name);
+
+        System.out.print("새 가격 입력 (그대로면 엔터): ");
+        String priceInput = sc.nextLine();
+        if (!priceInput.isEmpty()) update.setPrice(Integer.parseInt(priceInput));
+
+        System.out.print("카테고리를 새로 지정하시겠습니까? (y/N): ");
+        String changeCat = sc.nextLine();
+        if (changeCat.equalsIgnoreCase("y")) {
+
+            List<CategoryVO> flatList = cdao.selectCategoryFlat(); // 이 메서드는 따로 구현 필요
+            List<Integer> validIds = flatList.stream().map(CategoryVO::getCategoryId).toList();
+
+            System.out.print("새 상위 카테고리 ID 입력 > ");
+            int parentId = Integer.parseInt(sc.nextLine());
+
+            System.out.print("새 하위 카테고리 ID 입력 > ");
+            int childId = Integer.parseInt(sc.nextLine());
+
+            if (!validIds.contains(parentId) || !validIds.contains(childId)) {
+                System.out.println("❌ 잘못된 카테고리입니다. 수정을 취소합니다.");
+            } else {
+                mdao.deleteMenuCategoryByMenuId(menuId);
+
+                List<Integer> newCategoryIds = new ArrayList<>();
+                newCategoryIds.add(parentId);
+                newCategoryIds.add(childId);
+
+                mdao.insertMenuCategories(menuId, newCategoryIds);
+            }
+        }
+
+        int result = mdao.updateMenuByVO(update);
+        if (result > 0) {
+            System.out.println("✅ 메뉴가 성공적으로 수정되었습니다.");
+        } else {
+            System.out.println("❌ 메뉴 수정에 실패했습니다.");
+        }
+    }
+
+
+    
 }

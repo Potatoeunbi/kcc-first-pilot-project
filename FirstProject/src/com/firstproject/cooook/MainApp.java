@@ -9,8 +9,8 @@ public class MainApp {
 		printBanner();
 		
 	    
-		LoginView loginView = new LoginView();
-		loginView.runLogin();
+//		LoginView loginView = new LoginView();
+//		loginView.runLogin();
 
 
 	}

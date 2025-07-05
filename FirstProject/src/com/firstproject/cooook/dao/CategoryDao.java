@@ -181,4 +181,50 @@ public class CategoryDao {
 		
 		return roots;
 	}
+	
+	public List<CategoryVO> selectLeafCategories() {
+	    List<CategoryVO> list = new ArrayList<>();
+	    String sql = """
+	        SELECT c.category_id, c.category_name, c.parent_id
+	        FROM category c
+	        WHERE NOT EXISTS (
+	            SELECT 1 FROM category c2 WHERE c2.parent_id = c.category_id
+	        )
+	    """;
+
+	    try (Connection conn = DBUtil.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql);
+	         ResultSet rs = pstmt.executeQuery()) {
+
+	        while (rs.next()) {
+	            CategoryVO c = new CategoryVO();
+	            c.setCategoryId(rs.getInt("category_id"));
+	            c.setCategoryName(rs.getString("category_name"));
+	            c.setParentId(rs.getInt("parent_id"));
+	            list.add(c);
+	        }
+
+	    } catch (SQLException e) {
+	        System.out.println("❌ 하위 카테고리 조회 실패: " + e.getMessage());
+	    }
+
+	    return list;
+	}
+
+	public List<CategoryVO> selectCategoryFlat() {
+	    List<CategoryVO> flat = new ArrayList<>();
+	    flatten(selectCategory(), flat);
+	    return flat;
+	}
+
+	private void flatten(List<CategoryVO> source, List<CategoryVO> flat) {
+	    for (CategoryVO c : source) {
+	        flat.add(c);
+	        if (c.getChild() != null && !c.getChild().isEmpty()) {
+	            flatten(c.getChild(), flat);
+	        }
+	    }
+	}
+
+	
 }
