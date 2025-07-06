@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.firstproject.cooook.db.DBUtil;
-import com.firstproject.cooook.vo.CategoryVO;
-import com.firstproject.cooook.vo.MenuCategoryVO;
 import com.firstproject.cooook.vo.MenuVO;
 import com.firstproject.cooook.vo.UpdateMenuVO;
 
@@ -204,7 +202,7 @@ public class MenuDao {
 	            vo.setMenuId(rs.getInt("MENU_ID"));
 	            vo.setMenuName(rs.getString("MENU_NAME"));
 	            vo.setPrice(rs.getInt("PRICE"));
-	        }
+ 	        }
 
 	    } catch (SQLException e) {
 	        System.out.println("❌ 메뉴 상세 조회 오류: " + e.getMessage());
