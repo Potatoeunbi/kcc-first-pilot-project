@@ -63,7 +63,6 @@ public class RecipeView {
 
 	        try {
 	            // 2. 메뉴 ID 입력
-	            Scanner sc = new Scanner(System.in);
 	            System.out.print("\n레시피를 조회할 메뉴 ID를 입력하세요: ");
 	            int menuId = Integer.parseInt(sc.nextLine());
 
@@ -109,7 +108,6 @@ public class RecipeView {
 	    	    System.out.println("❌ 관리자만 접근할 수 있는 기능입니다.");
 	    	    return;
 	    	}
-	        Scanner sc = new Scanner(System.in);
 
 	        // 1. 레시피가 아직 등록되지 않은 메뉴 목록 출력
 	        List<MenuVO> availableMenus = rdao.selectMenusWithoutRecipe();
@@ -204,8 +202,6 @@ public class RecipeView {
 	            System.out.println("⚠️ 레시피가 등록된 메뉴가 없습니다.");
 	            return;
 	        }
-
-	        Scanner sc = new Scanner(System.in);
 
 	        System.out.println("[ 레시피 수정 대상 메뉴 목록 ]");
 	        for (MenuVO m : menus) {
@@ -358,8 +354,6 @@ public class RecipeView {
 	            return;
 	        }
 
-	        Scanner sc = new Scanner(System.in);
-
 	        System.out.println("[ 레시피 완전 삭제 대상 메뉴 목록 ]");
 	        for (MenuVO menu : menus) {
 	            System.out.printf("%d. %s (%,d원)\n", menu.getMenuId(), menu.getMenuName(), menu.getPrice());
@@ -387,7 +381,7 @@ public class RecipeView {
 	            String confirm = sc.nextLine().trim();
 
 	            if (confirm.equalsIgnoreCase("Y")) {
-	                int result = rdao.deleteRecipeByMenuId(menuId);
+	                rdao.deleteRecipeByMenuId(menuId);
 	                System.out.println("✅ " + " 레시피가 삭제되었습니다.");
 	            } else {
 	                System.out.println("⏪ 삭제를 취소했습니다.");

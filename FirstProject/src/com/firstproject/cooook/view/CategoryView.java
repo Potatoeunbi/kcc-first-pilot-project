@@ -3,7 +3,6 @@ package com.firstproject.cooook.view;
 import java.util.List;
 import java.util.Scanner;
 
-import com.firstproject.cooook.common.Session;
 import com.firstproject.cooook.dao.CategoryDao;
 import com.firstproject.cooook.util.Util;
 import com.firstproject.cooook.vo.CategoryVO;
