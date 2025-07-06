@@ -185,7 +185,6 @@ public class StaffDao {
 	        stmt = con.prepareStatement(sql);
 	        stmt.setString(1, email);
 	        stmt.setString(2, PasswordUtil.hashPassword(inputPw)); // 입력 비밀번호를 해시해서 비교
-
 	        rs = stmt.executeQuery();
 
 	        if (rs.next()) {

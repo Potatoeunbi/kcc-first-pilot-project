@@ -1,14 +1,13 @@
 package com.firstproject.cooook.vo;
-import java.util.List;
 
 import lombok.Data;
 
 @Data
-public class MenuVO {
+public class UpdateMenuVO {
     private int menuId;
     private String menuName;
     private int price;
-    private String roleName; 
-    private List<Integer> categoryIds;  
-
+    private String categoryName;
+    private Integer parentCategoryId; 
+    private int categoryId;       
 }
