@@ -1,7 +1,7 @@
 package com.firstproject.cooook;
 
 import com.firstproject.cooook.view.LoginView;
-import com.firstproject.cooook.view.MenuView;
+import com.firstproject.cooook.view.RecipeView;
 
 public class MainApp {
 
@@ -31,6 +31,8 @@ public class MainApp {
 	    System.out.println("╚════════════════════════════════════════════════╝");
 	    System.out.println(ANSI_GREEN + "		   🚀 재고 재고 재고! 관리 시스템! 🚀" + ANSI_RESET);
 	    System.out.println();
+//	    RecipeView rv = new RecipeView();
+//	    rv.run();
 	}
 
 }

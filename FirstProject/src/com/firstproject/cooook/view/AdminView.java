@@ -15,7 +15,8 @@ public class AdminView {
             System.out.println("2. 권한 관리");
             System.out.println("3. 주문 관리");
             System.out.println("4. 재료 관리");
-            System.out.println("5. 카테고ㅁㄴㅇㄹ리 관리");
+            System.out.println("5. 카테고리 관리");
+            System.out.println("6. 레시피 관리");
             System.out.println("0. 로그아웃");
             System.out.println("\n========================================\n");
             System.out.print("메뉴 선택 ▶ ");
@@ -37,6 +38,9 @@ public class AdminView {
                 case 5:
                     new CategoryView().showMenu();
                     break;
+                case 6:
+                	new RecipeView().run();
+                	break;
                 case 0:
                     System.out.println("🔒 로그아웃 되었습니다.");
                     Session.clear();

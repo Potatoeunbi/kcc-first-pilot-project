@@ -11,9 +11,10 @@ public class WorkerView {
         while (true) {
             System.out.println("📋 작업자 메뉴");
             System.out.println("1. 주문 관리");
-            System.out.println("2. 재료 관리");
+            System.out.println("2. 메뉴 관리");
             System.out.println("3. 카테고리 관리");
             System.out.println("4. 내정보 관리");
+            System.out.println("5. 레시피 관리");
             System.out.println("0. 로그아웃");
 
             System.out.print("메뉴 선택 ▶ ");
@@ -24,14 +25,17 @@ public class WorkerView {
                     new OrderManageView().run();
                     break;
                 case 2:
-//                    new IngredientManageView().run();
+                    new MenuView().runMenu();
                     break;
                 case 3:
-//                    new CategoryManageView().run();
+                    new CategoryView().showMenu();
                     break;
                 case 4:
                 	new StaffManageView().run();
                   break;
+                case 5:
+                	new RecipeView().run();
+                	break;
                 case 0:
                     System.out.println("🔒 로그아웃 되었습니다.");
                     Session.clear();
