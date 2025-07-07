@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.firstproject.cooook.db.DBUtil;
 import com.firstproject.cooook.vo.MenuVO;
+import com.firstproject.cooook.vo.OrderVO;
 import com.firstproject.cooook.vo.UpdateMenuVO;
 
 public class MenuDao {
@@ -242,6 +243,58 @@ public class MenuDao {
 	    return updated;
 	}
 
+    public List<MenuVO> selectAllMenus() {
+        List<MenuVO> list = new ArrayList<>();
+        Connection con = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
 
+        try {
+            con = DBUtil.getConnection();
+            String sql = "SELECT menu_id, menu_name, price"
+            		+ "	FROM menu"
+            		+ " order by menu_id";
+            stmt = con.prepareStatement(sql);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+            	MenuVO menu = new MenuVO();
+            	menu.setMenuId(rs.getInt("menu_id"));
+            	menu.setMenuName(rs.getString("menu_name"));
+            	menu.setPrice(rs.getInt("price"));
+                list.add(menu);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            DBUtil.close(rs);
+            DBUtil.close(stmt);
+            DBUtil.close(con);
+        }
+        return list;
+    }
+    
+    public MenuVO getMenuById(int menuId) {
+        MenuVO menu = null;
+        String sql = "SELECT * FROM menu WHERE menu_id = ?";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, menuId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                	menu = new MenuVO();
+                    menu.setMenuId(rs.getInt("menu_id"));
+                    menu.setMenuName(rs.getString("menu_name"));
+                    menu.setPrice(rs.getInt("price"));
+                }
+            }
+        } catch (SQLException e) {
+        	throw new RuntimeException(e);
+        }
+
+        return menu;
+    }
 	
 }

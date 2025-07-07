@@ -6,13 +6,16 @@ import java.util.Scanner;
 import com.firstproject.cooook.common.Session;
 import com.firstproject.cooook.dao.MenuDao;
 import com.firstproject.cooook.dao.OrderDao;
+import com.firstproject.cooook.vo.MenuVO;
 import com.firstproject.cooook.vo.OrderVO;
-import com.firstproject.cooook.vo.RoleVO;
 import com.firstproject.cooook.vo.StaffVO;
 
 public class OrderManageView {
     private final Scanner sc = new Scanner(System.in);
     private final OrderDao orderDao = new OrderDao();
+    private final MenuDao menuDao = new MenuDao();
+    private List<MenuVO> menuList  = null;
+
 
     public void run() {
         while (true) {
@@ -66,15 +69,15 @@ public class OrderManageView {
             System.out.println("\n============= [📦 주문 추가] =============");
             o.setStaffId(staff.getStaffId());
 
-//            checkMenuId(false);
-            System.out.print("메뉴 번호: ");
-            o.setMenuId(Integer.parseInt(sc.nextLine()));
+            MenuVO menu = checkMenuId(false);
+            o.setMenuId(menu.getMenuId());
 
             System.out.print("수량: ");
-            o.setQuantity(Integer.parseInt(sc.nextLine()));
+            
+            int quantity = Integer.parseInt(sc.nextLine());
+            o.setQuantity(quantity);
 
-            System.out.print("총 금액: ");
-            o.setTotalPrice(Integer.parseInt(sc.nextLine()));
+            o.setTotalPrice(quantity*menu.getPrice());
 
             orderDao.insertOrder(o);
             System.out.println("✅ 주문이 추가되었습니다.");
@@ -88,27 +91,34 @@ public class OrderManageView {
             System.out.println("\n============= [📦 주문 수정] =============");
             System.out.print("수정할 주문 번호: ");
             int orderId = Integer.parseInt(sc.nextLine());
-            OrderVO o = new OrderVO();
             
-            if(checkIsOrder(orderId)) {
-           	 	o.setOrderId(orderId);
-            }else {
+            OrderVO originalOrder = orderDao.getOrderById(orderId);
+            if(originalOrder == null) {
             	System.out.println("❌ 수정 실패: 올바르지 않은 주문 번호입니다.");
             	return;
             }
             
+            //order_id 정의
+            OrderVO updatedOrder = new OrderVO();
+            updatedOrder.setOrderId(orderId);
+            
+            //menu_id 정의
+            MenuVO menu = checkMenuId(true);
+            if(menu!=null) updatedOrder.setMenuId(menu.getMenuId());
            
-            o.setOrderId(orderId);
-
+            //quantity 정의
             System.out.print("변경할 수량 (Enter 생략): ");
             String qty = sc.nextLine();
-            if (!qty.isEmpty()) o.setQuantity(Integer.parseInt(qty));
+            int quantity = qty.isEmpty() ? originalOrder.getQuantity() : Integer.parseInt(qty);
+            updatedOrder.setQuantity(quantity);
 
-            System.out.print("변경할 총 금액 (Enter 생략): ");
-            String price = sc.nextLine();
-            if (!price.isEmpty()) o.setTotalPrice(Integer.parseInt(price));
+            //총 가격 계산 (변경된 메뉴 있으면 그 가격으로)
+            MenuVO priceMenu = (menu != null) ? menu : menuDao.getMenuById(originalOrder.getMenuId());
+            if (priceMenu != null) {
+                updatedOrder.setTotalPrice(priceMenu.getPrice() * quantity);
+            }
 
-            orderDao.updateOrder(o);
+            orderDao.updateOrder(updatedOrder);
             System.out.println("✅ 주문이 수정되었습니다.");
         } catch (Exception e) {
             System.out.println("❌ 수정 오류: " + e.getMessage());
@@ -122,8 +132,9 @@ public class OrderManageView {
             int orderId = Integer.parseInt(sc.nextLine());
             
             
-            if(!checkIsOrder(orderId)) {
-            	System.out.println("❌ 수정 실패: 올바르지 않은 주문 번호입니다.");
+            OrderVO originalOrder = orderDao.getOrderById(orderId);
+            if(originalOrder == null) {
+            	System.out.println("❌ 삭제 실패: 올바르지 않은 주문 번호입니다.");
             	return;
             }
             
@@ -139,58 +150,43 @@ public class OrderManageView {
         }
     }
     
-    private boolean checkIsOrder(int orderId) {
-    	boolean isValid = false;
-    	List<OrderVO> orderList = orderDao.getAllOrders();
-        for (OrderVO order : orderList) {
-            if (order.getOrderId() == orderId) {
-                isValid = true;
-                break;
-            }
-        }
-        return isValid;
-    }
-    
-    
     private void printMenuAll() {
-//    	MenuDao menuDao = new MenuDao();
-//    	roleList = menuDao.getAllMenus(); // 역할 목록 조회
-//
-//    	System.out.println("\n\n┌─────── 메뉴 선택 ──────┐");
-//    	for (RoleVO role : roleList) {
-//    	    System.out.printf("  %d: %s\n", role.getRoleId(), role.getRoleName());
-//    	}
-//    	System.out.println("└─────────────────────┘");
+    	menuList = menuDao.selectAllMenus(); // 역할 목록 조회
+
+    	System.out.println("\n\n┌─────── 메뉴 선택 ──────┐");
+    	for (MenuVO menu : menuList) {
+            System.out.printf("번호: %d | 이름: %s | 가격: %s\n",
+                    menu.getMenuId(), menu.getMenuName(), menu.getPrice());
+    	}
+    	System.out.println("└─────────────────────┘");
     }
     
-    private int checkMenuId(boolean updateMode) {
-        int roleId = -1;
+    private MenuVO checkMenuId(boolean updateMode) {
+        int menuId = -1;
+        MenuVO currentMenu = null;
         boolean isValid = false;
-//    	while (!isValid) {
-//            //메뉴 all select
-//    		printMenuAll();
-//             System.out.print(updateMode ? "변경할 메뉴 번호 (Enter 생략): " : "메뉴 번호: ");
-//             String input = sc.nextLine();
-//             if (updateMode && input.isBlank()) break;
-//             
-//             try {
-//                 roleId = Integer.parseInt(input);
-//                 
-//                 for (RoleVO role : roleList) {
-//                     if (role.getRoleId() == roleId) {
-//                         isValid = true;
-//                         break;
-//                     }
-//                 }
-//             
-//                 if (!isValid) {
-//                     System.out.println("❌ 존재하지 않는 역할입니다. 다시 입력해주세요.");
-//                 }
-//             } catch (NumberFormatException e) {
-//                 System.out.println("❌ 숫자로 입력해주세요.");
-//             }
-//          }
-//    	  
-         return roleId;
+    	while (!isValid) {
+    		printMenuAll();
+             System.out.print(updateMode ? "변경할 메뉴 번호 (Enter 생략): " : "메뉴 번호: ");
+             String input = sc.nextLine();
+             if (updateMode && input.isBlank()) break;
+             
+             try {
+            	 menuId = Integer.parseInt(input);
+
+            	 currentMenu = menuDao.getMenuById(menuId);
+            	 if(currentMenu != null) {
+            		 isValid = true;
+            	 }
+            	 
+                 if (!isValid) {
+                     System.out.println("❌ 존재하지 않는 메뉴입니다. 다시 입력해주세요.");
+                 }
+             } catch (NumberFormatException e) {
+                 System.out.println("❌ 숫자로 입력해주세요.");
+             }
+          }
+    	  
+         return currentMenu;
     }
 }

@@ -1,7 +1,11 @@
 package com.firstproject.cooook.dao;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.firstproject.cooook.db.DBUtil;
 import com.firstproject.cooook.vo.OrderVO;
@@ -148,4 +152,29 @@ public class OrderDao {
 
         return list;
     }
+    
+    public OrderVO getOrderById(int orderId) {
+        OrderVO order = null;
+        String sql = "SELECT * FROM "+tableName+" WHERE order_id = ? and deleted_at is null";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, orderId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    order = new OrderVO();
+                    order.setOrderId(rs.getInt("order_id"));
+                    order.setMenuId(rs.getInt("menu_id"));
+                    order.setQuantity(rs.getInt("quantity"));
+                    order.setTotalPrice(rs.getInt("total_price"));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return order;
+    }
+
 }
