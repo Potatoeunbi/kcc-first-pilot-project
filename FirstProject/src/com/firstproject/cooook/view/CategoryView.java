@@ -147,6 +147,10 @@ public class CategoryView {
         } else {
             int parentId = selectParentCategory();
             if (parentId == -1) return;
+            if (categoryDao.isCircularReference(categoryId, parentId)) {
+                UIHelper.printError("자신의 하위 카테고리를 부모로 지정할 수 없습니다.");
+                return;
+            }
             targetCategory.setParentId(parentId);
         }
         
