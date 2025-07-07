@@ -212,7 +212,7 @@ public class RoleDao {
         ResultSet rs = null;
         try {
             con = DBUtil.getConnection();
-            String sql = "SELECT role_seq.NEXTVAL FROM dual";
+            String sql = "SELECT max(role_id)+1 FROM roles";
             stmt = con.prepareStatement(sql);
             rs = stmt.executeQuery();
             if (rs.next()) {

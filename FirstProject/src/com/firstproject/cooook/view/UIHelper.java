@@ -6,7 +6,7 @@ import java.util.function.Function;
 import com.firstproject.cooook.vo.CategoryVO;
 
 public class UIHelper {
-    private static final int count = 50;
+    private static final int count = 100;
     private static int left = 0;
     private static int right = 0;
 
