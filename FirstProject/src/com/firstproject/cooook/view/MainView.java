@@ -54,6 +54,9 @@ public class MainView {
                case RoleFeatureCode.ORDER_MANAGE -> new OrderManageView().run();
 //               case RoleFeatureCode.MATERIAL_MANAGE -> new IngredientManageView().run();
                case RoleFeatureCode.CATEGORY_MANAGE -> new CategoryView().showMenu();
+               case RoleFeatureCode.MENU_MANAGE -> new MenuView2(sc).showMenuView();
+               case RoleFeatureCode.MENU_CATEGORY_MANAGE -> new MenuCategoryView(sc).showMenuCategoryView();
+                
                default -> UIHelper.printError("구현되지 않은 기능입니다..");
            }
         }

@@ -2,7 +2,6 @@ package com.firstproject.cooook.view;
 
 import java.sql.Connection;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 import com.firstproject.cooook.common.RoleFeatureCode;
