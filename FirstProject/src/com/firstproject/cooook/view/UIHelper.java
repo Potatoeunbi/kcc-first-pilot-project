@@ -13,7 +13,7 @@ public class UIHelper {
 
     public static <T> void printBoxedList(String title, String emptyTitle, List<T> list, Function<T, String> formatter) {
         calWidth(title);
-        String displayString = "│" + " ".repeat(left + 1) + title + " ".repeat(right % 2 == 0 ? right : right - 1) + "│";
+        String displayString = "│" + " ".repeat(left + 1) + title + " ".repeat((right + left) % 2 == 0 ? right : right - 1) + "│";
         
         System.out.println("┌" + "─".repeat(count) + "┐");
         System.out.println(displayString);
