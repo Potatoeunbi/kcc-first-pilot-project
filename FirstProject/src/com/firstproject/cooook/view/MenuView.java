@@ -46,6 +46,36 @@ public class MenuView {
             }
         }
     }
+    
+    
+    private void printCategoryWithMenuOnlyIfMenuExists(List<CategoryVO> categories, String indent) {
+        boolean hasMenu = false;
+
+        for (CategoryVO c : categories) {
+            List<MenuVO> menus = mdao.getMenuByCategoryId(c.getCategoryId());
+
+            if (!menus.isEmpty()) {
+                if (!hasMenu) {
+                    hasMenu = true;
+                }
+
+                System.out.println(indent + "📁 " + c.getCategoryName());
+                for (MenuVO m : menus) {
+                    System.out.println(indent + "   └ 🍽️ ID: " + m.getMenuId()
+                        + " | 이름: " + m.getMenuName()
+                        + " | 가격: " + m.getPrice() + "원");
+                }
+            }
+
+            if (c.getChild() != null && !c.getChild().isEmpty()) {
+                printCategoryWithMenuOnlyIfMenuExists(c.getChild(), indent + "    ");
+            }
+        }
+
+        if (!hasMenu && indent.isEmpty()) {
+            System.out.println("❌ 해당 카테고리에는 메뉴가 존재하지 않습니다.");
+        }
+    }
 
     private void printCategoryTree(List<CategoryVO> list, String prefix) {
         for (CategoryVO c : list) {
@@ -62,7 +92,6 @@ public class MenuView {
 
             List<MenuVO> menus = mdao.getMenuByCategoryId(c.getCategoryId());
             if (menus.isEmpty()) {
-                System.out.println(indent + "   (해당 카테고리에 메뉴가 존재하지 않습니다)");
             } else {
                 for (MenuVO m : menus) {
                     System.out.println(indent + "   └ 🍽️ ID: " + m.getMenuId()
@@ -90,8 +119,7 @@ public class MenuView {
             return;
         }
 
-        System.out.println("선택한 카테고리의 메뉴 트리");
-        printCategoryWithMenu(List.of(root), "");
+        printCategoryWithMenuOnlyIfMenuExists(List.of(root), "");
     }
 
     private CategoryVO findCategoryById(List<CategoryVO> list, int targetId) {
