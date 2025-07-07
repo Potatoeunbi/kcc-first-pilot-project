@@ -20,12 +20,12 @@ public class MenuView {
 
     public void runMenu() {
         while (true) {
-            System.out.println("원하시는 검색 기능을 선택하세요");
+        	UIHelper.printTitle("메뉴 관리");
             System.out.println("1. 카테고리별 메뉴 검색");
             System.out.println("2. 메뉴 이름 키워드 검색");
-            System.out.println("3. 메뉴 등록(관리자만 가능합니다.)");
-            System.out.println("4. 메뉴 삭제(관리자만 가능합니다.)");
-            System.out.println("5. 메뉴 업데이트(관리자만 가능합니다.)");
+            System.out.println("3. 메뉴 등록	");
+            System.out.println("4. 메뉴 삭제");
+            System.out.println("5. 메뉴 수정");
             System.out.println("9. 전체 카테고리 + 메뉴 트리 보기");
             System.out.println("0. 이전으로");
             System.out.print("선택 > ");
@@ -107,6 +107,7 @@ public class MenuView {
     }
 
     private void searchMenuByCategoryTree() {
+    	UIHelper.printTitle("카테고리 검색");
         List<CategoryVO> tree = cdao.selectCategory();
         printCategoryTree(tree, "");
 
@@ -134,6 +135,7 @@ public class MenuView {
     }
 
     private void searchMenuByKeyword() {
+    	UIHelper.printTitle("메뉴 이름 검색");
         System.out.print("검색할 키워드 입력 > ");
         String keyword = sc.nextLine();
 
@@ -149,6 +151,7 @@ public class MenuView {
     }
 
     private void deleteMenu() {
+    	UIHelper.printTitle("메뉴 삭제");
     	if (loginUser == null || loginUser.getRoleId() != 1) {
     	    System.out.println("❌ 관리자만 접근할 수 있는 기능입니다.");
     	    return;
@@ -168,6 +171,7 @@ public class MenuView {
     }
 
     public void insertMenu() {
+    	UIHelper.printTitle("메뉴 등록");
     	if (loginUser == null || loginUser.getRoleId() != 1) {
     	    System.out.println("❌ 관리자만 접근할 수 있는 기능입니다.");
     	    return;
@@ -198,6 +202,7 @@ public class MenuView {
     }
 
     public void updateMenu() {
+    	UIHelper.printTitle("메뉴 수정");
     	if (loginUser == null || loginUser.getRoleId() != 1) {
     	    System.out.println("❌ 관리자만 접근할 수 있는 기능입니다.");
     	    return;
