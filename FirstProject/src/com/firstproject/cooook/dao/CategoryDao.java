@@ -41,9 +41,36 @@ public class CategoryDao {
 				categories.add(category);
 			}
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+            System.err.println("❌ 카테고리 조회 중 오류: " + e.getMessage());
 		}
 		return categories;
+	}
+
+	public boolean isCircularReference(int categoryId, int newParentId) {
+		String sql = """
+				SELECT COUNT(*) AS CNT
+				FROM (
+					SELECT category_id
+					FROM Category
+					START WITH category_id = ?
+					CONNECT BY PRIOR category_id = parent_id
+				) t
+				WHERE category_id = ?
+				""";
+		try (Connection connection = DBUtil.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)){
+			ResultSet resultSet = statement.executeQuery();
+
+			statement.setInt(1, categoryId);
+			statement.setInt(2, newParentId);
+			
+			if (resultSet.next()) {
+				return resultSet.getInt("CNT") > 0;
+			}
+		} catch (SQLException e) {
+            System.err.println("❌ 카테고리 조회 중 오류: " + e.getMessage());
+		}
+		return false;
 	}
 
 	public List<CategoryVO> selectChildCategory(int categoryId) {
@@ -78,7 +105,7 @@ public class CategoryDao {
 				categories.add(category);
 			}
 		} catch (SQLException e) {
-			throw new RuntimeException(e);		
+            System.err.println("❌ 하위 카테고리 조회 중 오류: " + e.getMessage());
 		}
 		return categories;
 	}
@@ -109,7 +136,7 @@ public class CategoryDao {
 			}
 
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+            System.err.println("❌ 카테고리 조회 중 오류: " + e.getMessage());
 		}
 		return null;
 	}
@@ -132,8 +159,9 @@ public class CategoryDao {
 			
 			return statement.executeUpdate();
 		} catch (SQLException e) {
-			throw new RuntimeException(e);			
+            System.err.println("❌ 카테고리 등록 중 오류: " + e.getMessage());	
 		}
+		return -1;
 	}
 
 	public boolean updateCategory(CategoryVO category, int updateType) {
@@ -152,12 +180,42 @@ public class CategoryDao {
 			
 			return statement.executeUpdate() > 0;
 		} catch (SQLException e) {
-			throw new RuntimeException(e);			
+            System.err.println("❌ 카테고리 수정 중 오류: " + e.getMessage());	
 		}
+		return false;
 	}
 
-	public boolean deleteCategory(int categoryId) {
-		String sql = """
+	// public boolean deleteCategory(int categoryId) {
+	// 	String sql = """
+	// 			DELETE FROM category
+	// 			WHERE category_id IN (
+	// 			    SELECT category_id FROM category
+	// 			    START WITH category_id = ?
+	// 			    CONNECT BY PRIOR category_id = parent_id
+	// 			)
+	// 			""";
+	// 	try (Connection connection = DBUtil.getConnection();
+	// 			PreparedStatement statement = connection.prepareStatement(sql)) {
+
+	// 		statement.setInt(1, categoryId);
+	// 		return statement.executeUpdate() > 0;
+	// 	} catch (SQLException e) {
+    //         System.err.println("❌ 카테고리 삭제 중 오류: " + e.getMessage());	
+	// 	}
+	// 	return false;
+	// }
+
+	
+    public boolean deleteCategory(int categoryId) {
+        String deleteMenuCategorySql = """
+				DELETE FROM menu_category
+				WHERE category_id IN (
+				    SELECT category_id FROM category
+				    START WITH category_id = ?
+				    CONNECT BY PRIOR category_id = parent_id
+				)
+				""";
+        String deleteCategorySql = """
 				DELETE FROM category
 				WHERE category_id IN (
 				    SELECT category_id FROM category
@@ -165,17 +223,35 @@ public class CategoryDao {
 				    CONNECT BY PRIOR category_id = parent_id
 				)
 				""";
-		try (Connection connection = DBUtil.getConnection();
-				PreparedStatement statement = connection.prepareStatement(sql)) {
 
-			statement.setInt(1, categoryId);
-			return statement.executeUpdate() > 0;
-		} catch (SQLException e) {
-			throw new RuntimeException(e);			
-		}
-	}
+        try (Connection connection = DBUtil.getConnection()) {
+            connection.setAutoCommit(false);
 
-	
+            try (PreparedStatement menuCategoryStatement = connection.prepareStatement(deleteMenuCategorySql);
+                PreparedStatement categoryStatement = connection.prepareStatement(deleteCategorySql)) {
+
+                menuCategoryStatement.setInt(1, categoryId);
+                menuCategoryStatement.executeUpdate();
+
+                categoryStatement.setInt(1, categoryId);
+                int affectedRows = categoryStatement.executeUpdate();
+
+                connection.commit();
+                return affectedRows > 0;
+
+            } catch (SQLException e) {
+                connection.rollback();
+                System.err.println("❌ 트랜잭션 롤백됨: " + e.getMessage());
+            } finally {
+                connection.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ DB 연결 오류: " + e.getMessage());
+        }
+
+        return false;
+    }
+
 	public List<CategoryVO> selectLeafCategories() {
 	    List<CategoryVO> list = new ArrayList<>();
 	    String sql = """
@@ -218,5 +294,5 @@ public class CategoryDao {
 	            flatten(c.getChild(), flat);
 	        }
 	    }
-	}        
+	}
 }
