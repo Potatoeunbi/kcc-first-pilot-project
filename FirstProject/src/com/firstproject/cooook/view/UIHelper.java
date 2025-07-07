@@ -4,15 +4,16 @@ import java.util.List;
 import java.util.function.Function;
 
 import com.firstproject.cooook.vo.CategoryVO;
+import com.firstproject.cooook.vo.MenuCategory;
 
 public class UIHelper {
-    private static final int count = 50;
+    private static final int count = 80;
     private static int left = 0;
     private static int right = 0;
 
     public static <T> void printBoxedList(String title, String emptyTitle, List<T> list, Function<T, String> formatter) {
         calWidth(title);
-        String displayString = "│" + " ".repeat(left + 1) + title + " ".repeat(right - 1) + "│";
+        String displayString = "│" + " ".repeat(left + 1) + title + " ".repeat(right % 2 == 0 ? right : right - 1) + "│";
         
         System.out.println("┌" + "─".repeat(count) + "┐");
         System.out.println(displayString);
@@ -34,6 +35,24 @@ public class UIHelper {
         System.out.println("└" + "─".repeat(count) + "┘");
     }
 
+    public static <T> void printBoxedList(String title, List<T> list, Function<T, String> formatter) {
+        calWidth(title);
+        String displayString = "│" + " ".repeat(left + 1) + title + " ".repeat(right % 2 == 0 ? right : right - 1) + "│";
+        
+        System.out.println("┌" + "─".repeat(count) + "┐");
+        System.out.println(displayString);
+        System.out.println("├" + "─".repeat(count) + "┤");
+    
+        for (T item : list) {
+            displayString = formatter.apply(item);
+            displayString = truncateWithWidth(displayString, count);
+            calWidth(displayString);
+            displayString = "│" + displayString + " ".repeat(left + right) + "│";
+            System.out.println(displayString);
+        }
+        System.out.println("└" + "─".repeat(count) + "┘");
+    }
+
     public static void printCategoryTree(List<CategoryVO> categories) {
         String title = "📂 카테고리 목록";
         calWidth(title);
@@ -51,9 +70,54 @@ public class UIHelper {
         } else {
             for (CategoryVO category : categories) {
                 String indent = "    ".repeat(category.getLevel() - 1) + "📂"; 
-                String displayName = category.getCategoryName() + "(" + category.getCategoryId() + ")";
+                String displayName = " " + category.getCategoryName() + "(" + category.getCategoryId() + ")";
                 calWidth(indent + displayName);
                 displayString = "│" + indent + displayName + " ".repeat(left + right) + "│";
+                System.out.println(displayString);
+            }
+        }
+        System.out.println("└" + "─".repeat(count) + "┘");
+    }
+
+    public static void printMenuCategoryTree(List<MenuCategory> menuCategories) {
+        String title = "📂 메뉴 카테고리 목록";
+        calWidth(title);
+        String displayString = "│" + " ".repeat(left + 1) + title + " ".repeat(right - 1) + "│";
+        
+        System.out.println("┌" + "─".repeat(count) + "┐");
+        System.out.println(displayString);
+        System.out.println("├" + "─".repeat(count) + "┤");
+        
+        if (menuCategories == null || menuCategories.isEmpty()) {                
+            title = "📭 등록된 메뉴 카테고리가 없습니다";
+            calWidth(title);
+            displayString = "│" + " ".repeat(left + 1) + title + " ".repeat(right) + "│";
+            System.out.println(displayString);
+        } else {
+            for (MenuCategory menuCategory : menuCategories) {
+                String icon = "";
+                int menu = 0;
+                switch (menuCategory.getType()) {
+                    case "CATEGORY":        
+                        icon = "📂";
+                        break;
+                    case "MENU":            
+                        icon = "🍽️";
+                        menu = 1;
+                        break;
+                    case "HEADER": 
+                        icon = "📭";
+                        break;
+                    case "UNCATEGORIZED":
+                        icon = "🍽️";
+                        menu = 1;
+                        break;
+                }
+
+                String indent = "    ".repeat(menuCategory.getLevel() - 1) + icon; 
+                String displayName = " " + menuCategory.getName();
+                calWidth(indent + displayName);
+                displayString = "│" + indent + displayName + " ".repeat(left + right + menu) + "│";
                 System.out.println(displayString);
             }
         }
