@@ -34,8 +34,15 @@ public class MainView {
            System.out.println("0. 로그아웃");
 
            System.out.print("선택: ");
-           int choice = Integer.parseInt(sc.nextLine());
-
+           int choice = -1;
+           
+           try {
+        	   choice = Integer.parseInt(sc.nextLine());
+           } catch (NumberFormatException e) {
+        	   UIHelper.printError("유효한 숫자를 입력해주세요.");
+        	   continue;
+           }
+           
            if (choice == 0) {
                System.out.println("🔒 로그아웃 되었습니다.");
                return;
