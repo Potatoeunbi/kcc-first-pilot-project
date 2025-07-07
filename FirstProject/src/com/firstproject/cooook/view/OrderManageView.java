@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.firstproject.cooook.common.Session;
+import com.firstproject.cooook.dao.MenuDao;
 import com.firstproject.cooook.dao.OrderDao;
 import com.firstproject.cooook.vo.OrderVO;
+import com.firstproject.cooook.vo.RoleVO;
 import com.firstproject.cooook.vo.StaffVO;
 
 public class OrderManageView {
@@ -64,6 +66,7 @@ public class OrderManageView {
             System.out.println("\n============= [📦 주문 추가] =============");
             o.setStaffId(staff.getStaffId());
 
+//            checkMenuId(false);
             System.out.print("메뉴 번호: ");
             o.setMenuId(Integer.parseInt(sc.nextLine()));
 
@@ -146,5 +149,48 @@ public class OrderManageView {
             }
         }
         return isValid;
+    }
+    
+    
+    private void printMenuAll() {
+//    	MenuDao menuDao = new MenuDao();
+//    	roleList = menuDao.getAllMenus(); // 역할 목록 조회
+//
+//    	System.out.println("\n\n┌─────── 메뉴 선택 ──────┐");
+//    	for (RoleVO role : roleList) {
+//    	    System.out.printf("  %d: %s\n", role.getRoleId(), role.getRoleName());
+//    	}
+//    	System.out.println("└─────────────────────┘");
+    }
+    
+    private int checkMenuId(boolean updateMode) {
+        int roleId = -1;
+        boolean isValid = false;
+//    	while (!isValid) {
+//            //메뉴 all select
+//    		printMenuAll();
+//             System.out.print(updateMode ? "변경할 메뉴 번호 (Enter 생략): " : "메뉴 번호: ");
+//             String input = sc.nextLine();
+//             if (updateMode && input.isBlank()) break;
+//             
+//             try {
+//                 roleId = Integer.parseInt(input);
+//                 
+//                 for (RoleVO role : roleList) {
+//                     if (role.getRoleId() == roleId) {
+//                         isValid = true;
+//                         break;
+//                     }
+//                 }
+//             
+//                 if (!isValid) {
+//                     System.out.println("❌ 존재하지 않는 역할입니다. 다시 입력해주세요.");
+//                 }
+//             } catch (NumberFormatException e) {
+//                 System.out.println("❌ 숫자로 입력해주세요.");
+//             }
+//          }
+//    	  
+         return roleId;
     }
 }

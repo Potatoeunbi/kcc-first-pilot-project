@@ -55,7 +55,10 @@ public class RoleDao {
 				params.add(description);
 			}
 			
-			if(params.isEmpty()) return;
+			if (setClauses.isEmpty()) {
+	            System.out.println("❗ 수정할 항목이 없습니다.");
+	            return;
+            }
 			
 			String sql = "UPDATE " + tableName + " SET " + String.join(", ", setClauses) + " WHERE role_id = ?";
 			params.add(role.getRoleId());
