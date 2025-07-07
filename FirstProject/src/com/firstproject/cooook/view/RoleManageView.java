@@ -68,6 +68,7 @@ public class RoleManageView {
             
             mergeRoleFeature(con, false, -1);
             roleDao.insertRole(con, role);
+            con.commit();
             UIHelper.printSuccess("권한 등록 완료!");
         } catch (Exception e) {
         	DBUtil.rollback(con);
@@ -139,17 +140,6 @@ public class RoleManageView {
     }
 
     private void printAllRoles() {
-//        List<RoleVO> roles = roleDao.getAllRoles();
-//        UIHelper.printBoxedList("[🔒 전체 권한 목록]", "목록이 없습니다.", roles, role -> 
-//            String.format("번호: %d | 이름: %s | 설명: %s", 
-//            role.getRoleId(), role.getRoleName(), role.getDescription()));
-    	
-//        UIHelper.printTitle("[🔒 권한 코드]");
-//        for (Map.Entry<Integer, String> entry : RoleFeatureCode.menuIndexToFeature.entrySet()) {
-//            int number = entry.getKey();
-//            System.out.printf("번호: %d | 이름: %s | 설명: %s | 권한: %s", role.getRoleId(), role.getRoleName(), role.getDescription());
-//        }
-    	
         List<RoleVO> roles = roleDao.getAllRoles();
         UIHelper.printBoxedList("[🔒 전체 권한 목록]", "목록이 없습니다.", roles, role -> {
             String featureNames = convertFeatureCodesToNames(role.getFeatureCodes());
@@ -195,7 +185,7 @@ public class RoleManageView {
     	if(!updateMode) {
     		roleId = roleDao.selectNextRoleSeq();
     	}else {
-    		roleDao.deleteRoleFeature(con, roleId);
+    		int deleteRows = roleDao.deleteRoleFeature(con, roleId);
     	}
     	
     	String featureInput = null;
@@ -217,6 +207,7 @@ public class RoleManageView {
 	    	                hasValidInput = true;
 	    	            } else {
 	    	                UIHelper.printError("잘못된 메뉴 번호: " + idx);
+	    	                hasValidInput = false;
 	    	            }
 	    	        } catch (NumberFormatException e) {
 	    	            UIHelper.printError("숫자가 아닌 값이 포함되어 있음:" + indexStr);
