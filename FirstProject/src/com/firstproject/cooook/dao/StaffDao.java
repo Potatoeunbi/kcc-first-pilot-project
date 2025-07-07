@@ -89,7 +89,10 @@ public class StaffDao {
 			    params.add(roleId);
 			}
 			
-			if(params.isEmpty()) return;
+			if (setClauses.isEmpty()) {
+	            System.out.println("❗ 수정할 항목이 없습니다.");
+	            return;
+	        }
 			
 			String sql = "UPDATE " + tableName + " SET " + String.join(", ", setClauses) + " WHERE staff_id = ?";
 		    params.add(staff.getStaffId());
@@ -185,6 +188,7 @@ public class StaffDao {
 	        stmt = con.prepareStatement(sql);
 	        stmt.setString(1, email);
 	        stmt.setString(2, PasswordUtil.hashPassword(inputPw)); // 입력 비밀번호를 해시해서 비교
+
 	        rs = stmt.executeQuery();
 
 	        if (rs.next()) {
@@ -209,6 +213,24 @@ public class StaffDao {
 
 	    return staff;
 	}
-
 	
+	public int selectEmailCount(String email) {
+	    Connection con = null;
+	    PreparedStatement stmt = null;
+	    ResultSet rs = null;
+	    try {
+	    		con = DBUtil.getConnection();
+	    		String sql = "SELECT COUNT(*) FROM staff WHERE email = ?";
+	    		stmt = con.prepareStatement(sql);
+
+	    		stmt.setString(1, email);
+	    		rs = stmt.executeQuery();
+	    		rs.next();
+	    		return rs.getInt(1);
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return -1;
+	    }
+	}
 }
