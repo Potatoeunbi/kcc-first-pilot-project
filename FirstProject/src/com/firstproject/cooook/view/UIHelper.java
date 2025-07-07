@@ -7,7 +7,7 @@ import com.firstproject.cooook.vo.CategoryVO;
 import com.firstproject.cooook.vo.MenuCategory;
 
 public class UIHelper {
-    private static final int count = 80;
+    private static final int count = 100;
     private static int left = 0;
     private static int right = 0;
 
