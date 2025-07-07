@@ -9,7 +9,6 @@ import java.util.List;
 
 import com.firstproject.cooook.db.DBUtil;
 import com.firstproject.cooook.vo.MenuVO;
-import com.firstproject.cooook.vo.OrderVO;
 import com.firstproject.cooook.vo.UpdateMenuVO;
 
 public class MenuDao {

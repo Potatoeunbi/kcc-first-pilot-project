@@ -4,7 +4,6 @@ import java.util.Scanner;
 
 import com.firstproject.cooook.common.Session;
 import com.firstproject.cooook.dao.StaffDao;
-import com.firstproject.cooook.util.PasswordUtil;
 import com.firstproject.cooook.vo.StaffVO;
 
 public class LoginView {
