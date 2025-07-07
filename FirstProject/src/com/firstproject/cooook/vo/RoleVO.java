@@ -6,4 +6,5 @@ public class RoleVO {
     private int roleId;
     private String roleName;
     private String description;
+    private String featureCodes;
 }

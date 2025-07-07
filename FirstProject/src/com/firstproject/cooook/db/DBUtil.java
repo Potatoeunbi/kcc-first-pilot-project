@@ -61,4 +61,26 @@ public class DBUtil {
         close(ps);
         close(con);
     }
+    
+    public static void rollback(Connection con) {
+        if (con != null) {
+            try {
+                con.rollback();
+            } catch (SQLException e) {
+                System.err.println("롤백 실패: " + e.getMessage());
+            }
+        }
+    }
+
+    
+    public static void setAutoCommitTrue(Connection con) {
+        if (con != null) {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException e) {
+                System.err.println("AutoCommit 복원 실패: " + e.getMessage());
+            }
+        }
+    }
+
 }

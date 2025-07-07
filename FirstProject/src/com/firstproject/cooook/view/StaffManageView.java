@@ -16,13 +16,14 @@ public class StaffManageView {
 
     public void run() {
         while (true) {
-            System.out.println("\n\n============= [👤 작업자 관리] =============\n");
+        	 UIHelper.printTitle("👤 작업자 관리");
+             System.out.println();
             System.out.println("1. 작업자 보기");
             System.out.println("2. 작업자 추가");
             System.out.println("3. 작업자 수정");
             System.out.println("4. 작업자 삭제");
             System.out.println("0. 뒤로가기");
-            System.out.println("\n========================================\n");
+            System.out.println();
             System.out.print("메뉴 선택 ▶ ");
             String input = sc.nextLine();
 
@@ -42,7 +43,7 @@ public class StaffManageView {
                 case "0":
                     return;
                 default:
-                    System.out.println("❗ 잘못된 입력입니다.");
+                	UIHelper.printError("잘못된 입력입니다.");
             }
         }
     }
@@ -50,10 +51,7 @@ public class StaffManageView {
     private void insertStaff() {
         try {
             StaffVO staff = new StaffVO();
-            System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n============= [👤 작업자 추가] =============\n");
-            
-            
-            
+            UIHelper.printTitle("[👤 작업자 추가]");            
             String firstName = inputNonEmpty("성 (first name): ");
             staff.setFirstName(firstName);
             
@@ -69,24 +67,24 @@ public class StaffManageView {
             staff.setRoleId(checkRoleId(false));
             
             staffDao.insertStaff(staff);
-            System.out.println("\n✅ 작업자 등록 완료!");
-            System.out.println("\n========================================\n");
+            UIHelper.printSuccess("작업자 등록 완료!");
+            UIHelper.printDivider();
         } catch (Exception e) {
-            System.out.println("❌ 입력 오류: " + e.getMessage());
+        	UIHelper.printError("입력 오류: " + e.getMessage());
         }
     }
 
     private void updateStaff() {
         try {
             StaffVO staff = new StaffVO();
-            System.out.println("\n============= [👤 작업자 수정] =============\n");
+            UIHelper.printTitle("[👤 작업자 수정]");
             System.out.print("수정할 작업자 번호 : ");
             int staffId = Integer.parseInt(sc.nextLine());
             
             if(checkIsStaff(staffId)) {
             	 staff.setStaffId(staffId);
             }else {
-            	System.out.println("❌ 수정 실패: 올바르지 않은 작업자 번호입니다.");
+            	UIHelper.printError("수정 실패: 올바르지 않은 작업자 번호입니다.");
             	return;
             }
 
@@ -113,9 +111,9 @@ public class StaffManageView {
             if(roleId > 0) staff.setRoleId(roleId);
             
             staffDao.updateStaff(staff);
-            System.out.println("\n✅ 작업자 수정 완료!");
+            UIHelper.printSuccess("작업자 수정 완료!");
         } catch (Exception e) {
-            System.out.println("❌ 수정 실패: " + e.getMessage());
+        	UIHelper.printError("수정 실패: " + e.getMessage());
         }
     }
 
@@ -133,46 +131,37 @@ public class StaffManageView {
     
     private void printRoleAll() {
     	RoleDao roleDao = new RoleDao();
-    	roleList = roleDao.getAllRoles(); // 역할 목록 조회
-
-    	System.out.println("\n\n┌─────── 권한 선택 ──────┐");
-    	for (RoleVO role : roleList) {
-    	    System.out.printf("  %d: %s\n", role.getRoleId(), role.getRoleName());
-    	}
-    	System.out.println("└─────────────────────┘");
+    	roleList = roleDao.getAllRoles(); // 역할 목록 조회    	
+    	UIHelper.printBoxedList("권한 선택", "권한이 없습니다.", roleList, role -> String.format("  %d: %s", role.getRoleId(), role.getRoleName()));
     }
 
     private void printStaffAll() {
         List<StaffVO> staffList = staffDao.getStaffAll();
 
-        System.out.println("\n============= [👤 전체 작업자 목록] =============\n");
-        for (StaffVO staff : staffList) {
-            System.out.printf("번호: %d | 이름: %s %s | 권한: %s | 이메일: %s | 전화번호: %s | 생성일: %s\n",
-                    staff.getStaffId(),
-                    staff.getFirstName(),
-                    staff.getLastName(),
-                    staff.getRoleName(),
-                    staff.getEmail(),
-                    staff.getPhone(),
-                    staff.getCreatedAt());
-        }
-        System.out.println("\n============================================\n");
+        UIHelper.printBoxedList("[👤 전체 작업자 목록]", "작업자가 없습니다.", staffList, staff -> String.format("번호: %d | 이름: %s %s | 권한: %s | 이메일: %s | 전화번호: %s | 생성일: %s\n",
+                staff.getStaffId(),
+                staff.getFirstName(),
+                staff.getLastName(),
+                staff.getRoleName(),
+                staff.getEmail(),
+                staff.getPhone(),
+                staff.getCreatedAt()));
     }
 
     
     private void deleteStaff() {
         try {
-            System.out.println("\n============= [👤 작업자 삭제] =============\n");
+        	UIHelper.printTitle("[👤 작업자 삭제]");
             System.out.print("삭제할 작업자 번호 : ");
             int staffId = Integer.parseInt(sc.nextLine());
             int affectedRows = (int) staffDao.softDeleteStaff(staffId);
             if (affectedRows == 0) {
-	            System.out.println("❌ 삭제 실패: 올바르지 않은 작업자 번호입니다.");
+            	UIHelper.printError("삭제 실패: 올바르지 않은 작업자 번호입니다.");
 	        } else {
-	        	   System.out.println("\n✅ 작업자 삭제 완료!");
+	        	UIHelper.printSuccess("작업자 삭제 완료!");
 	        }
         } catch (Exception e) {
-            System.out.println("❌ 삭제 실패: " + e.getMessage());
+        	UIHelper.printError("삭제 실패: " + e.getMessage());
         }
     }
     
@@ -225,13 +214,13 @@ public class StaffManageView {
 
             // 1. 형식 체크
             if (!isValidEmail(email)) {
-                System.out.println("❌ 이메일 형식이 올바르지 않습니다. 다시 입력해주세요.");
+                UIHelper.printError("이메일 형식이 올바르지 않습니다. 다시 입력해주세요.");
                 continue;
             }
 
             // 2. 중복 체크
             if (staffDao.selectEmailCount(email) > 0) {
-                System.out.println("⚠️ 이미 존재하는 이메일입니다. 다시 입력해주세요.");
+                UIHelper.printWarning("이미 존재하는 이메일입니다. 다시 입력해주세요.");
                 continue;
             }
             
@@ -251,7 +240,7 @@ public class StaffManageView {
 
             // 1. 형식 체크
             if (!isValidPassword(password)) {
-                System.out.println("❌ 비밀번호 형식이 올바르지 않습니다. 다시 입력해주세요.");
+                UIHelper.printError("비밀번호 형식이 올바르지 않습니다. 다시 입력해주세요.");
                 continue;
             }
             
@@ -271,7 +260,7 @@ public class StaffManageView {
 
             // 1. 형식 체크
             if (!isValidPhone(phone)) {
-                System.out.println("❌ 전화번호 형식이 올바르지 않습니다. 다시 입력해주세요.");
+                UIHelper.printError("전화번호 형식이 올바르지 않습니다. 다시 입력해주세요.");
                 continue;
             }
             
@@ -301,10 +290,10 @@ public class StaffManageView {
                  }
              
                  if (!isValid) {
-                     System.out.println("❌ 존재하지 않는 역할입니다. 다시 입력해주세요.");
+                     UIHelper.printError("존재하지 않는 역할입니다. 다시 입력해주세요.");
                  }
              } catch (NumberFormatException e) {
-                 System.out.println("❌ 숫자로 입력해주세요.");
+                 UIHelper.printError("숫자로 입력해주세요.");
              }
           }
     	  
@@ -318,7 +307,7 @@ public class StaffManageView {
             System.out.print(label);
             input = sc.nextLine();
             if (input.isBlank()) {
-                System.out.println("❌ 공백 입력은 불가합니다. 다시 입력해주세요.");
+                UIHelper.printError("공백 입력은 불가합니다. 다시 입력해주세요.");
             }
         }
         return input;
