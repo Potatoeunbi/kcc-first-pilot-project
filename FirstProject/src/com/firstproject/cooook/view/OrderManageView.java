@@ -8,7 +8,6 @@ import com.firstproject.cooook.dao.MenuDao;
 import com.firstproject.cooook.dao.OrderDao;
 import com.firstproject.cooook.vo.MenuVO;
 import com.firstproject.cooook.vo.OrderVO;
-import com.firstproject.cooook.vo.RoleVO;
 import com.firstproject.cooook.vo.StaffVO;
 
 public class OrderManageView {

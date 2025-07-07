@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.firstproject.cooook.db.DBUtil;
-import com.firstproject.cooook.vo.MenuVO;
 import com.firstproject.cooook.vo.OrderVO;
 
 public class OrderDao {
