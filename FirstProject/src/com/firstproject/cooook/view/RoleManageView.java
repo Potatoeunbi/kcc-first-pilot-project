@@ -12,13 +12,17 @@ public class RoleManageView {
     
     public void run() {
         while (true) {
-            System.out.println("\n\n============= [🔒 권한 관리] =============\n");
+            UIHelper.printTitle("[🔒 권한 관리]");
+            System.out.println();
+            // System.out.println("\n\n============= [🔒 권한 관리] =============\n");
             System.out.println("1. 권한 보기");
             System.out.println("2. 권한 추가");
             System.out.println("3. 권한 수정");
             System.out.println("4. 권한 삭제");
             System.out.println("0. 뒤로가기");
-            System.out.println("\n========================================\n");
+            UIHelper.printDivider();
+            System.out.println();
+            // System.out.println("\n========================================\n");
             System.out.print("메뉴 선택 ▶ ");
             String input = sc.nextLine();
 
@@ -38,7 +42,8 @@ public class RoleManageView {
                 case "0":
                     return;
                 default:
-                    System.out.println("❗ 잘못된 입력입니다.");
+                    UIHelper.printError("잘못된 입력입니다.");
+                    // System.out.println("❗ 잘못된 입력입니다.");
             }
         }
     }
@@ -46,7 +51,8 @@ public class RoleManageView {
     private void insertRole() {
         try {
             RoleVO role = new RoleVO();
-            System.out.println("\n============= [🔒 권한 추가] =============\n");
+            UIHelper.printTitle("[🔒 권한 추가]");
+            // System.out.println("\n============= [🔒 권한 추가] =============\n");
             System.out.print("권한 이름: ");
             role.setRoleName(sc.nextLine());
 
@@ -54,23 +60,27 @@ public class RoleManageView {
             role.setDescription(sc.nextLine());
 
             roleDao.insertRole(role);
-            System.out.println("\n✅ 권한 등록 완료!");
+            UIHelper.printSuccess("권한 등록 완료!");
+            // System.out.println("\n✅ 권한 등록 완료!");
         } catch (Exception e) {
-            System.out.println("❌ 입력 오류: " + e.getMessage());
+            UIHelper.printError("입력 오류: " + e.getMessage());
+            // System.out.println("❌ 입력 오류: " + e.getMessage());
         }
     }
 
 
     private void updateRole() {
         try {
-            System.out.println("\n============= [🔒 권한 수정] =============\n");
+            UIHelper.printTitle("[🔒 권한 수정]");
+            // System.out.println("\n============= [🔒 권한 수정] =============\n");
             System.out.print("수정할 권한 번호 : ");
             int roleId = Integer.parseInt(sc.nextLine());
 
             // 수정할 권한 존재 여부 확인
             RoleVO existingRole = roleDao.getRoleById(roleId);
             if (existingRole == null) {
-                System.out.println("❌ 수정 실패: 올바르지 않은 권한 번호입니다.");
+                UIHelper.printError("수정 실패: 올바르지 않은 권한 번호입니다.");
+                // System.out.println("❌ 수정 실패: 올바르지 않은 권한 번호입니다.");
                 return;
             }
 
@@ -86,25 +96,31 @@ public class RoleManageView {
             if (!desc.isEmpty()) role.setDescription(desc);
 
             roleDao.updateRole(role);
-            System.out.println("\n✅ 권한 수정 완료!");
+            UIHelper.printSuccess("권한 수정 완료!");
+            // System.out.println("\n✅ 권한 수정 완료!");
         } catch (Exception e) {
-            System.out.println("❌ 수정 실패: " + e.getMessage());
+            UIHelper.printError("수정 실패: " + e.getMessage());
+            // System.out.println("❌ 수정 실패: " + e.getMessage());
         }
     }
     
     private void deleteRole() {
         try {
-            System.out.println("\n============= [🔒 권한 삭제] =============\n");
+            UIHelper.printTitle("[🔒 권한 삭제]");
+            // System.out.println("\n============= [🔒 권한 삭제] =============\n");
             System.out.print("삭제할 권한 번호 : ");
             int roleId = Integer.parseInt(sc.nextLine());
             int affectedRows = roleDao.deleteRole(roleId);  // 물리 삭제 함수
             if (affectedRows == 0) {
-                System.out.println("❌ 삭제 실패: 올바르지 않은 권한 번호입니다.");
+                UIHelper.printError("삭제 실패: 올바르지 않은 권한 번호입니다.");
+                // System.out.println("❌ 삭제 실패: 올바르지 않은 권한 번호입니다.");
             } else {
-                System.out.println("\n✅ 권한 삭제 완료!");
+                UIHelper.printSuccess("권한 삭제 완료!");
+                // System.out.println("\n✅ 권한 삭제 완료!");
             }
         } catch (Exception e) {
-            System.out.println("❌ 삭제 실패: " + e.getMessage());
+            UIHelper.printError("삭제 실패: " + e.getMessage());
+            // System.out.println("❌ 삭제 실패: " + e.getMessage());
         }
     }
 
@@ -116,6 +132,11 @@ public class RoleManageView {
                               role.getRoleId(), role.getRoleName(), role.getDescription());
         }
         System.out.println("\n============================================\n");
+
+        
+        UIHelper.printBoxedList("[🔒 전체 권한 목록]", "목록이 없습니다.", roles, role -> 
+            String.format("번호: %d | 이름: %s | 설명: %s", 
+            role.getRoleId(), role.getRoleName(), role.getDescription()));
     }
 }
 
