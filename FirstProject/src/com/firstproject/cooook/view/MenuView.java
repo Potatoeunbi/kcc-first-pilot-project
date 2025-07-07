@@ -27,7 +27,7 @@ public class MenuView {
             System.out.println("4. 메뉴 삭제(관리자만 가능합니다.)");
             System.out.println("5. 메뉴 업데이트(관리자만 가능합니다.)");
             System.out.println("9. 전체 카테고리 + 메뉴 트리 보기");
-            System.out.println("0. 종료");
+            System.out.println("0. 이전으로");
             System.out.print("선택 > ");
             int choice = Integer.parseInt(sc.nextLine());
 

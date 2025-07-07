@@ -14,7 +14,7 @@ public class AdminView {
             System.out.println("1. 작업자 관리");
             System.out.println("2. 권한 관리");
             System.out.println("3. 주문 관리");
-            System.out.println("4. 재료 관리");
+            System.out.println("4. 메뉴 관리");
             System.out.println("5. 카테고리 관리");
             System.out.println("6. 레시피 관리");
             System.out.println("0. 로그아웃");
