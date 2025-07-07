@@ -12,14 +12,13 @@ import com.firstproject.cooook.vo.RoleVO;
 
 public class RoleDao {
 
-    private static final String tableName = "roles";
+	private static final String tableName = "roles";
+    private static final String subTableName = "role_feature";
 
     // 역할 추가
-    public void insertRole(RoleVO role) {
-        Connection con = null;
+    public void insertRole(Connection con, RoleVO role) {
         PreparedStatement stmt = null;
         try {
-            con = DBUtil.getConnection();
             String sql = "INSERT INTO " + tableName + " (role_name, description) VALUES (?, ?)";
             stmt = con.prepareStatement(sql);
             stmt.setString(1, role.getRoleName());
@@ -29,16 +28,13 @@ public class RoleDao {
             throw new RuntimeException(e);
         } finally {
             DBUtil.close(stmt);
-            DBUtil.close(con);
         }
     }
 
     // 역할 수정
-    public void updateRole(RoleVO role) {
-        Connection con = null;
+    public void updateRole(Connection con, RoleVO role) {
         PreparedStatement stmt = null;
         try {
-            con = DBUtil.getConnection();
             List<String> setClauses = new ArrayList<>();
 			List<Object> params = new ArrayList<>();
 			
@@ -73,16 +69,15 @@ public class RoleDao {
             throw new RuntimeException(e);
         } finally {
             DBUtil.close(stmt);
-            DBUtil.close(con);
         }
     }
 
-    public int deleteRole(int roleId) {
+    public int softDeleteRole(int roleId) {
         Connection con = null;
         PreparedStatement stmt = null;
         try {
             con = DBUtil.getConnection();
-            String sql = "DELETE FROM " + tableName + " WHERE role_id = ?";
+            String sql = "UPDATE "+tableName+" SET deleted_at = sysdate WHERE role_id = ?";
             stmt = con.prepareStatement(sql);
             stmt.setInt(1, roleId);
             return stmt.executeUpdate();
@@ -93,6 +88,21 @@ public class RoleDao {
             DBUtil.close(con);
         }
     }
+    
+    public int deleteRoleFeature(Connection con, int roleId) {
+        PreparedStatement stmt = null;
+        try {
+            String sql = "DELETE FROM " + subTableName + " WHERE role_id = ?";
+            stmt = con.prepareStatement(sql);
+            stmt.setInt(1, roleId);
+            return stmt.executeUpdate(); // 삭제된 행 수 반환
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            DBUtil.close(stmt);
+        }
+    }
+
 
     // 역할 전체 조회
     public List<RoleVO> getAllRoles() {
@@ -102,7 +112,13 @@ public class RoleDao {
         ResultSet rs = null;
         try {
             con = DBUtil.getConnection();
-            String sql = "SELECT role_id, role_name, description FROM " + tableName;
+            String sql = "SELECT r.role_id, r.role_name, r.description, "
+            		+ " LISTAGG(f.feature_code, ', ') WITHIN GROUP (ORDER BY f.feature_code) AS features "
+            		+ "FROM " + tableName + " r "
+            		+ " left join role_feature f on f.role_id = r.role_id"
+            		+ " where r.deleted_at is null"
+            		+ " GROUP BY r.role_id, r.role_name, r.description"
+            		+ " order by r.role_id";
             stmt = con.prepareStatement(sql);
             rs = stmt.executeQuery();
             while (rs.next()) {
@@ -110,6 +126,7 @@ public class RoleDao {
                 role.setRoleId(rs.getInt("role_id"));
                 role.setRoleName(rs.getString("role_name"));
                 role.setDescription(rs.getString("description"));
+                role.setFeatureCodes(rs.getString("features"));
                 roleList.add(role);
             }
         } catch (SQLException e) {
@@ -150,4 +167,66 @@ public class RoleDao {
         }
         return role;
     }
+    
+    
+    public List<String> getFeaturesByRoleId(int roleId) {
+        List<String> features = new ArrayList<>();
+        String sql = "SELECT feature_code FROM "+subTableName+" WHERE role_id = ? order by display_order";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, roleId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    features.add(rs.getString("feature_code"));
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("❌ 권한 기능 조회 실패: " + e.getMessage());
+        }
+
+        return features;
+    }
+    
+    public void insertRoleFeature(Connection con, int role_id, String feature_code, int display_order) {
+        PreparedStatement stmt = null;
+        try {
+            String sql = "INSERT INTO " + subTableName + " (feature_code, display_order, role_id) VALUES (?, ?, ?)";
+            stmt = con.prepareStatement(sql);
+            stmt.setString(1, feature_code);
+            stmt.setInt(2, display_order);
+            stmt.setInt(3, role_id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            DBUtil.close(stmt);
+        }
+    }
+    
+    public int selectNextRoleSeq() {
+        Connection con = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            con = DBUtil.getConnection();
+            String sql = "SELECT role_seq.NEXTVAL FROM dual";
+            stmt = con.prepareStatement(sql);
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            } else {
+                throw new RuntimeException("시퀀스 NEXTVAL을 가져오지 못했습니다.");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            DBUtil.close(rs);
+            DBUtil.close(stmt);
+            DBUtil.close(con);
+        }
+    }
+
 }

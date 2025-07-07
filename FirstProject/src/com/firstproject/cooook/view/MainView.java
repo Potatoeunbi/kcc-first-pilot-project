@@ -1,73 +1,61 @@
 package com.firstproject.cooook.view;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
+import com.firstproject.cooook.common.RoleFeatureCode;
 import com.firstproject.cooook.common.Session;
-import com.firstproject.cooook.util.Util;
+import com.firstproject.cooook.dao.RoleDao;
+import com.firstproject.cooook.vo.StaffVO;
 
 public class MainView {
-	private String rollName;
 	private Scanner sc = new Scanner(System.in);
 
-	public MainView(String rollName) {
-		this.rollName = rollName;
-	}
 
     public void showMenu() {
         while (true) {
-        	// System.out.println("\n========================================\n");
-        	if (rollName.equals("관리자")) {
-                UIHelper.printTitle("📋 관리자 메뉴");
-                System.out.println();
-        		//System.out.println("📋 관리자 메뉴\n");
-                System.out.println("1. 작업자 관리");
-                System.out.println("2. 권한 관리");
-                System.out.println("3. 주문 관리");
-                System.out.println("4. 재료 관리");
-                System.out.println("5. 카테고리 관리");
-                System.out.println("0. 로그아웃");
-        	} else {
-                UIHelper.printTitle("📋 작업자 메뉴");
-                System.out.println("📋 작업자 메뉴");
-                System.out.println("1. 주문 관리");	
-        	}
+           StaffVO staff = Session.getCurrentUser();
         	
-            // System.out.println("\n========================================\n");
-            System.out.println();
-            System.out.print("메뉴 선택 ▶ ");
+           RoleDao roleFeatureDao = new RoleDao();
+           List<String> featureCodes = roleFeatureDao.getFeaturesByRoleId(staff.getRoleId());
+
+           UIHelper.printTitle("📋 " + staff.getRoleName() + " 메뉴");
+           int index = 1;
+           Map<Integer, String> menuIndexToFeature = new LinkedHashMap<>();
+           for (String featureCode : featureCodes) {
+               String label = RoleFeatureCode.FEATURE_NAME_MAP.getOrDefault(featureCode, featureCode);
+               System.out.println(index + ". " + label);
+               menuIndexToFeature.put(index, featureCode);
+               index++;
+           }
             
-            String input = sc.next();            
-            if (!Util.isInteger(input)) continue;
-    		
-    		int choice =  Integer.parseInt(input);
-    		
-            switch (choice) {
-                case 1:
-                	if (rollName.equals("관리자")) {
-                        new StaffManageView().run();                		
-                	} else {
-                        new OrderManageView().run();
-                	}                	
-                    break;
-                case 2:
-                    new RoleManageView().run();
-                    break;
-                case 3:
-                    new OrderManageView().run();
-                    break;
-                case 4:
-//                    new IngredientManageView().run();
-                    break;
-                case 5:
-                    new CategoryView().showMenu();
-                    break;
-                case 0:
-                    System.out.println("🔒 로그아웃 되었습니다.");
-                    Session.clear();
-                    return;
-                default:
-                    System.out.println("❗ 잘못된 입력입니다.");
-            }
+           System.out.println("0. 로그아웃");
+
+           System.out.print("선택: ");
+           int choice = Integer.parseInt(sc.nextLine());
+
+           if (choice == 0) {
+               System.out.println("🔒 로그아웃 되었습니다.");
+               return;
+           }
+
+           String selectedFeature = menuIndexToFeature.get(choice);
+           if (selectedFeature == null) {
+        	   UIHelper.printError("잘못된 입력입니다.");
+               return;
+           }
+
+           // 기능별 실행
+           switch (selectedFeature) {
+               case RoleFeatureCode.WORKER_MANAGE -> new StaffManageView().run();
+               case RoleFeatureCode.ROLE_MANAGE -> new RoleManageView().run();
+               case RoleFeatureCode.ORDER_MANAGE -> new OrderManageView().run();
+//               case RoleFeatureCode.MATERIAL_MANAGE -> new IngredientManageView().run();
+               case RoleFeatureCode.CATEGORY_MANAGE -> new CategoryView().showMenu();
+               default -> UIHelper.printError("구현되지 않은 기능입니다..");
+           }
         }
     }
     

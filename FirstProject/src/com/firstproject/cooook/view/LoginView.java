@@ -55,6 +55,6 @@ public class LoginView {
         // System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n========================================");
         // System.out.println("\n✅ 로그인 성공! " + loginStaff.getFirstName()+ loginStaff.getLastName() + "님 환영합니다!\n");
         
-        new MainView(loginStaff.getRoleName()).showMenu();
+        new MainView().showMenu();
     }
 }
