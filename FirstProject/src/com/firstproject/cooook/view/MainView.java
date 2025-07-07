@@ -8,16 +8,18 @@ import com.firstproject.cooook.util.Util;
 public class MainView {
 	private String rollName;
 	private Scanner sc = new Scanner(System.in);
-	
+
 	public MainView(String rollName) {
 		this.rollName = rollName;
 	}
 
     public void showMenu() {
         while (true) {
-        	System.out.println("\n========================================\n");
+        	// System.out.println("\n========================================\n");
         	if (rollName.equals("관리자")) {
-        		System.out.println("📋 관리자 메뉴\n");
+                UIHelper.printTitle("📋 관리자 메뉴");
+                System.out.println();
+        		//System.out.println("📋 관리자 메뉴\n");
                 System.out.println("1. 작업자 관리");
                 System.out.println("2. 권한 관리");
                 System.out.println("3. 주문 관리");
@@ -25,11 +27,13 @@ public class MainView {
                 System.out.println("5. 카테고리 관리");
                 System.out.println("0. 로그아웃");
         	} else {
+                UIHelper.printTitle("📋 작업자 메뉴");
                 System.out.println("📋 작업자 메뉴");
                 System.out.println("1. 주문 관리");	
         	}
         	
-            System.out.println("\n========================================\n");
+            // System.out.println("\n========================================\n");
+            System.out.println();
             System.out.print("메뉴 선택 ▶ ");
             
             String input = sc.next();            
