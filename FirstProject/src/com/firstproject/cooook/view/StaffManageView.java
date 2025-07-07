@@ -49,47 +49,24 @@ public class StaffManageView {
 
     private void insertStaff() {
         try {
-            int roleId = -1;
-            boolean isValid = false;
             StaffVO staff = new StaffVO();
             System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n============= [👤 작업자 추가] =============\n");
-            System.out.print("성 (first name): ");
-            staff.setFirstName(sc.nextLine());
+            
+            
+            
+            String firstName = inputNonEmpty("성 (first name): ");
+            staff.setFirstName(firstName);
+            
+            String lastName = inputNonEmpty("이름 (last name): ");
+            staff.setLastName(lastName);
 
-            System.out.print("이름 (last name): ");
-            staff.setLastName(sc.nextLine());
+            staff.setEmail(checkEmail(false));
+            
+            staff.setPassword(PasswordUtil.hashPassword(checkPassword(false)));
 
-            System.out.print("이메일: ");
-            staff.setEmail(sc.nextLine());
-
-            System.out.print("비밀번호: ");
-            staff.setPassword(PasswordUtil.hashPassword(sc.nextLine()));
-
-            System.out.print("전화번호: ");
-            staff.setPhone(sc.nextLine());
-
-            while (!isValid) {
-                printRoleAll();
-                System.out.print("권한 번호: ");
-                try {
-                    roleId = Integer.parseInt(sc.nextLine());
-
-                    for (RoleVO role : roleList) {
-                        if (role.getRoleId() == roleId) {
-                            isValid = true;
-                            break;
-                        }
-                    }
-
-                    if (!isValid) {
-                        System.out.println("❌ 존재하지 않는 역할입니다. 다시 입력해주세요.");
-                    }else {
-                    	 staff.setRoleId(roleId);
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("❌ 숫자로 입력해주세요.");
-                }
-            }
+            staff.setPhone(checkPhone(false));
+            
+            staff.setRoleId(checkRoleId(false));
             
             staffDao.insertStaff(staff);
             System.out.println("\n✅ 작업자 등록 완료!");
@@ -101,8 +78,6 @@ public class StaffManageView {
 
     private void updateStaff() {
         try {
-        	String roleId = null;
-            boolean isValid = false;
             StaffVO staff = new StaffVO();
             System.out.println("\n============= [👤 작업자 수정] =============\n");
             System.out.print("수정할 작업자 번호 : ");
@@ -122,43 +97,20 @@ public class StaffManageView {
             System.out.print("변경할 이름 (Enter 생략): ");
             String ln = sc.nextLine();
             if (!ln.isEmpty()) staff.setLastName(ln);
-
             
-            System.out.print("변경할 이메일 (Enter 생략): ");
-            String email = sc.nextLine();
-            if (!email.isEmpty()) staff.setEmail(email);
-
-            System.out.print("변경할 비밀번호 (Enter 생략): ");
-            String pw = sc.nextLine();
+            String email = checkEmail(true);
+            if(!email.isEmpty()) staff.setEmail(email);
+            
+            
+            String pw = checkPassword(true);
             if (!pw.isEmpty()) staff.setPassword(PasswordUtil.hashPassword(pw));
 
             
-            System.out.print("변경할 전화번호 (Enter 생략): ");
-            String phone = sc.nextLine();
+            String phone = checkPhone(true);
             if (!phone.isEmpty()) staff.setPhone(phone);
 
-            while (!isValid) {
-                printRoleAll();
-                System.out.print("변경할 권한 번호 (Enter 생략): ");
-                try {
-                    roleId = sc.nextLine();
-
-                    for (RoleVO role : roleList) {
-                        if (role.getRoleId() == Integer.parseInt(roleId)) {
-                            isValid = true;
-                            break;
-                        }
-                    }
-
-                    if (!isValid) {
-                        System.out.println("❌ 존재하지 않는 역할입니다. 다시 입력해주세요.");
-                    }else {
-                    	if (!roleId.isEmpty()) staff.setRoleId(Integer.parseInt(roleId));
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("❌ 숫자로 입력해주세요.");
-                }
-            }
+            int roleId = checkRoleId(true);
+            if(roleId > 0) staff.setRoleId(roleId);
             
             staffDao.updateStaff(staff);
             System.out.println("\n✅ 작업자 수정 완료!");
@@ -222,5 +174,153 @@ public class StaffManageView {
         } catch (Exception e) {
             System.out.println("❌ 삭제 실패: " + e.getMessage());
         }
+    }
+    
+    public static boolean isValidEmail(String email) {
+        return email != null && email.matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$");
+    }
+    
+    public static boolean isValidPassword(String password) {
+        if (password == null || password.length() < 8) return false;
+
+        boolean hasLetter = password.matches(".*[A-Za-z].*");
+        boolean hasDigit = password.matches(".*\\d.*");
+        boolean hasSpecial = password.matches(".*[!@#$%^&*(),.?\":{}|<>\\[\\]~`\\-_+=/\\\\].*");
+
+        return hasLetter && hasDigit && hasSpecial;
+    }
+    
+    public static boolean isValidPhone(String phone) {
+        if (phone == null) return false;
+
+        // 전화번호 패턴 (지역번호 or 휴대폰)
+        String regex = "^(0\\d{1,2})-(\\d{3,4})-(\\d{4})$";
+
+        // 전체 형식 검사 먼저
+        if (!phone.matches(regex)) {
+            return false;
+        }
+
+        // 세부 검사 (지역번호 or 휴대폰)
+        String[] parts = phone.split("-");
+        String first = parts[0];
+
+        // 휴대폰: 010, 011, 016~019
+        if (first.matches("01[016789]")) return true;
+
+        // 지역번호: 02, 031~064
+        if (first.equals("02") || first.matches("0[3-6][0-9]")) return true;
+
+        return false;
+    }
+
+    
+    private String checkEmail(boolean updateMode) {
+    	String email = null;
+    	
+        while (true) {
+            System.out.print(updateMode ? "변경할 이메일 (Enter 생략): " : "이메일: ");
+            email = sc.nextLine();
+            if(updateMode && email.isEmpty()) break;
+
+            // 1. 형식 체크
+            if (!isValidEmail(email)) {
+                System.out.println("❌ 이메일 형식이 올바르지 않습니다. 다시 입력해주세요.");
+                continue;
+            }
+
+            // 2. 중복 체크
+            if (staffDao.selectEmailCount(email) > 0) {
+                System.out.println("⚠️ 이미 존재하는 이메일입니다. 다시 입력해주세요.");
+                continue;
+            }
+            
+            break;
+        }
+        
+        return email;
+    }
+    
+    private String checkPassword(boolean updateMode) {
+    	String password = null;
+    	
+        while (true) {
+            System.out.print(updateMode ? "변경할 비밀번호 (Enter 생략, 영문자+숫자+특수문자+8자 이상): " : "비밀번호 (영문자+숫자+특수문자+8자 이상): ");
+            password = sc.nextLine().trim();
+            if(updateMode && password.isEmpty()) break;
+
+            // 1. 형식 체크
+            if (!isValidPassword(password)) {
+                System.out.println("❌ 비밀번호 형식이 올바르지 않습니다. 다시 입력해주세요.");
+                continue;
+            }
+            
+            break;
+        }
+        
+        return password;
+    }
+    
+    private String checkPhone(boolean updateMode) {
+    	String phone = null;
+    	
+        while (true) {
+            System.out.print(updateMode ? "변경할 전화번호 (Enter 생략, - 포함): " : "전화번호 (- 포함): ");
+            phone = sc.nextLine().trim();
+            if(updateMode && phone.isEmpty()) break;
+
+            // 1. 형식 체크
+            if (!isValidPhone(phone)) {
+                System.out.println("❌ 전화번호 형식이 올바르지 않습니다. 다시 입력해주세요.");
+                continue;
+            }
+            
+            break;
+        }
+        
+        return phone;
+    }
+    
+    private int checkRoleId(boolean updateMode) {
+        int roleId = -1;
+        boolean isValid = false;
+    	while (!isValid) {
+             printRoleAll();
+             System.out.print(updateMode ? "변경할 권한 번호 (Enter 생략): " : "권한 번호: ");
+             String input = sc.nextLine();
+             if (updateMode && input.isBlank()) break;
+             
+             try {
+                 roleId = Integer.parseInt(input);
+                 
+                 for (RoleVO role : roleList) {
+                     if (role.getRoleId() == roleId) {
+                         isValid = true;
+                         break;
+                     }
+                 }
+             
+                 if (!isValid) {
+                     System.out.println("❌ 존재하지 않는 역할입니다. 다시 입력해주세요.");
+                 }
+             } catch (NumberFormatException e) {
+                 System.out.println("❌ 숫자로 입력해주세요.");
+             }
+          }
+    	  
+         return roleId;
+    }
+    
+    //@Potatoeunbi inputNonEmpty 함수 모두 찾아서 공통 함수로 빼야 함. 만일 하나밖에 없으면 주석만 제거
+    private String inputNonEmpty(String label) {
+        String input = "";
+        while (input.isBlank()) {
+            System.out.print(label);
+            input = sc.nextLine();
+            if (input.isBlank()) {
+                System.out.println("❌ 공백 입력은 불가합니다. 다시 입력해주세요.");
+            }
+        }
+        return input;
     }
 }

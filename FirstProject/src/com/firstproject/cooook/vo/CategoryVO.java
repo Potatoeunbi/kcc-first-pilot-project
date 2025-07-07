@@ -11,4 +11,5 @@ public class CategoryVO {
 	private String categoryName;
 	private Integer parentId;
 	private List<CategoryVO> child = new ArrayList<>();
+	private int level;
 }

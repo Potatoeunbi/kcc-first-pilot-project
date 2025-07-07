@@ -55,6 +55,10 @@ public class RoleDao {
 				params.add(description);
 			}
 			
+			if (setClauses.isEmpty()) {
+	            System.out.println("❗ 수정할 항목이 없습니다.");
+	            return;
+            }
 			
 			String sql = "UPDATE " + tableName + " SET " + String.join(", ", setClauses) + " WHERE role_id = ?";
 			params.add(role.getRoleId());
@@ -126,7 +130,7 @@ public class RoleDao {
 
         try {
             con = DBUtil.getConnection();
-            String sql = "SELECT role_id, role_name, description FROM roles WHERE role_id = ?";
+            String sql = "SELECT role_id, role_name, description FROM roles WHERE role_id = ? order by role_id";
             stmt = con.prepareStatement(sql);
             stmt.setInt(1, roleId);
             rs = stmt.executeQuery();
