@@ -1,7 +1,6 @@
 package com.firstproject.cooook;
 
 import com.firstproject.cooook.view.LoginView;
-import com.firstproject.cooook.view.MenuView;
 
 public class MainApp {
 

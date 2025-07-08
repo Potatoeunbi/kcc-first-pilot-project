@@ -4,27 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.firstproject.cooook.common.Session;
 import com.firstproject.cooook.dao.CategoryDao;
 import com.firstproject.cooook.dao.MenuDao;
 import com.firstproject.cooook.vo.CategoryVO;
 import com.firstproject.cooook.vo.MenuVO;
+import com.firstproject.cooook.vo.StaffVO;
 import com.firstproject.cooook.vo.UpdateMenuVO;
 
 public class MenuView {
     Scanner sc = new Scanner(System.in);
     MenuDao mdao = new MenuDao();
     CategoryDao cdao = new CategoryDao();
+    StaffVO loginUser = Session.getCurrentUser();
 
     public void runMenu() {
         while (true) {
-            System.out.println("원하시는 검색 기능을 선택하세요");
+        	UIHelper.printTitle("메뉴 관리");
             System.out.println("1. 카테고리별 메뉴 검색");
             System.out.println("2. 메뉴 이름 키워드 검색");
-            System.out.println("3. 메뉴 등록");
+            System.out.println("3. 메뉴 등록	");
             System.out.println("4. 메뉴 삭제");
-            System.out.println("5. 메뉴 업데이트");
+            System.out.println("5. 메뉴 수정");
             System.out.println("9. 전체 카테고리 + 메뉴 트리 보기");
-            System.out.println("0. 종료");
+            System.out.println("0. 이전으로");
             System.out.print("선택 > ");
             int choice = Integer.parseInt(sc.nextLine());
 
@@ -43,6 +46,36 @@ public class MenuView {
             }
         }
     }
+    
+    
+    private void printCategoryWithMenuOnlyIfMenuExists(List<CategoryVO> categories, String indent) {
+        boolean hasMenu = false;
+
+        for (CategoryVO c : categories) {
+            List<MenuVO> menus = mdao.getMenuByCategoryId(c.getCategoryId());
+
+            if (!menus.isEmpty()) {
+                if (!hasMenu) {
+                    hasMenu = true;
+                }
+
+                System.out.println(indent + "📁 " + c.getCategoryName());
+                for (MenuVO m : menus) {
+                    System.out.println(indent + "   └ 🍽️ ID: " + m.getMenuId()
+                        + " | 이름: " + m.getMenuName()
+                        + " | 가격: " + m.getPrice() + "원");
+                }
+            }
+
+            if (c.getChild() != null && !c.getChild().isEmpty()) {
+                printCategoryWithMenuOnlyIfMenuExists(c.getChild(), indent + "    ");
+            }
+        }
+
+        if (!hasMenu && indent.isEmpty()) {
+            System.out.println("❌ 해당 카테고리에는 메뉴가 존재하지 않습니다.");
+        }
+    }
 
     private void printCategoryTree(List<CategoryVO> list, String prefix) {
         for (CategoryVO c : list) {
@@ -59,7 +92,6 @@ public class MenuView {
 
             List<MenuVO> menus = mdao.getMenuByCategoryId(c.getCategoryId());
             if (menus.isEmpty()) {
-                System.out.println(indent + "   (해당 카테고리에 메뉴가 존재하지 않습니다)");
             } else {
                 for (MenuVO m : menus) {
                     System.out.println(indent + "   └ 🍽️ ID: " + m.getMenuId()
@@ -75,6 +107,7 @@ public class MenuView {
     }
 
     private void searchMenuByCategoryTree() {
+    	UIHelper.printTitle("카테고리 검색");
         List<CategoryVO> tree = cdao.selectCategory();
         printCategoryTree(tree, "");
 
@@ -87,8 +120,7 @@ public class MenuView {
             return;
         }
 
-        System.out.println("선택한 카테고리의 메뉴 트리");
-        printCategoryWithMenu(List.of(root), "");
+        printCategoryWithMenuOnlyIfMenuExists(List.of(root), "");
     }
 
     private CategoryVO findCategoryById(List<CategoryVO> list, int targetId) {
@@ -103,6 +135,7 @@ public class MenuView {
     }
 
     private void searchMenuByKeyword() {
+    	UIHelper.printTitle("메뉴 이름 검색");
         System.out.print("검색할 키워드 입력 > ");
         String keyword = sc.nextLine();
 
@@ -118,6 +151,11 @@ public class MenuView {
     }
 
     private void deleteMenu() {
+    	UIHelper.printTitle("메뉴 삭제");
+    	if (loginUser == null || loginUser.getRoleId() != 1) {
+    	    System.out.println("❌ 관리자만 접근할 수 있는 기능입니다.");
+    	    return;
+    	}
         printCategoryWithMenu(cdao.selectCategory(), "");
         System.out.print("삭제할 메뉴 ID 입력 > ");
         int menuId = Integer.parseInt(sc.nextLine());
@@ -133,6 +171,11 @@ public class MenuView {
     }
 
     public void insertMenu() {
+    	UIHelper.printTitle("메뉴 등록");
+    	if (loginUser == null || loginUser.getRoleId() != 1) {
+    	    System.out.println("❌ 관리자만 접근할 수 있는 기능입니다.");
+    	    return;
+    	}
         System.out.print("메뉴 이름: ");
         String name = sc.nextLine();
         System.out.print("가격: ");
@@ -159,6 +202,11 @@ public class MenuView {
     }
 
     public void updateMenu() {
+    	UIHelper.printTitle("메뉴 수정");
+    	if (loginUser == null || loginUser.getRoleId() != 1) {
+    	    System.out.println("❌ 관리자만 접근할 수 있는 기능입니다.");
+    	    return;
+    	}
         System.out.println("📋 전체 카테고리 및 메뉴 트리:");
         printCategoryWithMenu(cdao.selectCategory(), "");
 
