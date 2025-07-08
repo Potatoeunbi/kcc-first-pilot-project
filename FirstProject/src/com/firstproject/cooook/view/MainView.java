@@ -59,7 +59,7 @@ public class MainView {
                case RoleFeatureCode.WORKER_MANAGE -> new StaffManageView().run();
                case RoleFeatureCode.ROLE_MANAGE -> new RoleManageView().run();
                case RoleFeatureCode.ORDER_MANAGE -> new OrderManageView().run();
-//               case RoleFeatureCode.MATERIAL_MANAGE -> new IngredientManageView().run();
+               case RoleFeatureCode.MATERIAL_MANAGE -> new RecipeView().run();
                case RoleFeatureCode.CATEGORY_MANAGE -> new CategoryView().showMenu();
                case RoleFeatureCode.MENU_MANAGE -> new MenuView2(sc).showMenuView();
                case RoleFeatureCode.MENU_CATEGORY_MANAGE -> new MenuCategoryView(sc).showMenuCategoryView();
