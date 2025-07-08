@@ -23,10 +23,11 @@ public class RecipeView {
 	        	UIHelper.printTitle("📂 레시피 관리");
 	            System.out.println("1. 레시피 조회");
 	            System.out.println("2. 레시피 등록");
-	            System.out.println("3. 레시피 업데이트");
+	            System.out.println("3. 레시피 수정");
 	            System.out.println("4. 레시피 삭제");
-	            System.out.println("0. 이전으로");
-	            System.out.print("선택 > ");
+	            System.out.println("0. 메인 메뉴로");
+				System.out.println();
+	            System.out.print("메뉴 선택 ▶ ");
 	            String input = sc.nextLine();
 
 	            switch (input) {
@@ -40,15 +41,8 @@ public class RecipeView {
 	        }
 	    }
 
-	    public void showRecipeList() {
-	        UIHelper.printTitle("📂 레시피 조회");
-
+	    public void showRecipeList() {			
 	        List<MenuVO> menus = rdao.selectMenusWithRecipe();
-
-	        if (menus.isEmpty()) {
-	            UIHelper.printError(" 레시피가 등록된 메뉴가 없습니다.");
-	            return;
-	        }
 
 	        List<String> displayList = new ArrayList<>();
 	        for (MenuVO menu : menus) {
@@ -59,6 +53,9 @@ public class RecipeView {
 	            );
 	            displayList.add(line);
 	        }
+			
+	        UIHelper.printTitle("📂 레시피 조회");
+
 	        UIHelper.printBoxedList("🧾 레시피 등록된 메뉴", "⚠️ 등록된 메뉴가 없습니다.", displayList, s -> s);
 
 	        try {
@@ -118,7 +115,7 @@ public class RecipeView {
 	        }
 
 	        UIHelper.printBoxedList(
-	        	    "레시피 등록 대상 메뉴 목록",
+	        	    "레시피 등록 대상 메뉴 목록 ",
 	        	    "레시피를 등록할 수 있는 메뉴가 없습니다.",
 	        	    availableMenus,
 	        	    menu -> String.format("%d. %s (%,d원)", menu.getMenuId(), menu.getMenuName(), menu.getPrice())
@@ -135,10 +132,17 @@ public class RecipeView {
 	            }
 
 	            List<IngredientVO> ingredients = idao.selectAll();
-	            System.out.println("\n[ 재료 목록 ]");
-	            for (IngredientVO ing : ingredients) {
-	                System.out.printf("%d. %s [%s]\n", ing.getIngredientId(), ing.getIngredientName(), ing.getUnitDefault());
-	            }
+				UIHelper.printBoxedList(
+									"[ 재료 목록 ]",
+									"레시피를 등록할 수 있는 메뉴가 없습니다.",
+									ingredients,
+									ing -> String.format("%d. %s [%s]", ing.getIngredientId(), ing.getIngredientName(), ing.getUnitDefault())
+								);
+
+	            // System.out.println("\n[ 재료 목록 ]");
+	            // for (IngredientVO ing : ingredients) {
+	            //     System.out.printf("%d. %s [%s]\n", ing.getIngredientId(), ing.getIngredientName(), ing.getUnitDefault());
+	            // }
 
 	            System.out.print("재료 ID들 (콤마로 구분): ");
 	            String[] ingredientIds = sc.nextLine().split(",");
@@ -203,7 +207,7 @@ public class RecipeView {
 	        }
 
 	        UIHelper.printBoxedList(
-	        	    "레시피 수정 대상 메뉴 목록",
+	        	    "레시피 수정대상 메뉴 목록",
 	        	    "수정 가능한 레시피가 없습니다.",
 	        	    menus,
 	        	    m -> String.format("%d. %s (%,d원)", m.getMenuId(), m.getMenuName(), m.getPrice())
@@ -277,11 +281,8 @@ public class RecipeView {
 
 	            // 3. 추가
 	            List<IngredientVO> ingredients = idao.selectAll();
-	            System.out.println("\n[ 전체 재료 목록 ]");
-	            for (IngredientVO ing : ingredients) {
-	                System.out.printf("%d. %s [%s]\n", ing.getIngredientId(), ing.getIngredientName(), ing.getUnitDefault());
-	            }
-
+				UIHelper.printBoxedList("[ 전체 재료 목록 ]", ingredients, ing -> String.format("%d. %s [%s]", ing.getIngredientId(), ing.getIngredientName(), ing.getUnitDefault()));
+	            
 	            System.out.print("\n추가할 재료 ID (콤마, 없으면 엔터): ");
 	            String line = sc.nextLine();
 	            if (!line.isBlank()) {

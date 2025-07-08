@@ -55,14 +55,15 @@ public class CategoryDao {
 					START WITH category_id = ?
 					CONNECT BY PRIOR category_id = parent_id
 				) t
-				WHERE category_id = ?
+				WHERE category_id = ? 
 				""";
 		try (Connection connection = DBUtil.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)){
-			ResultSet resultSet = statement.executeQuery();
 
 			statement.setInt(1, categoryId);
 			statement.setInt(2, newParentId);
+
+			ResultSet resultSet = statement.executeQuery();			
 			
 			if (resultSet.next()) {
 				return resultSet.getInt("CNT") > 0;

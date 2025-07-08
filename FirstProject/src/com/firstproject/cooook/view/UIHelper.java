@@ -66,7 +66,7 @@ public class UIHelper {
         if (categories == null || categories.isEmpty()) {                
             title = "📭 등록된 카테고리가 없습니다";
             calWidth(title);
-            displayString = "│" + " ".repeat(left) + title + " ".repeat(right - 1) + "│";
+            displayString = "│" + " ".repeat(left) + title + " ".repeat(right - 2) + "│";
             System.out.println(displayString);
         } else {
             for (CategoryVO category : categories) {

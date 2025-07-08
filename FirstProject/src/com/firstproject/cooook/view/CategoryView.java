@@ -14,12 +14,11 @@ public class CategoryView {
 	public void showMenu() {
 		while (true) {
             UIHelper.printTitle("📂 카테고리 관리");
-			System.out.println();
             System.out.println("1. 카테고리 조회");
             System.out.println("2. 카테고리 등록");
             System.out.println("3. 카테고리 수정");
             System.out.println("4. 카테고리 삭제");
-            System.out.println("0. 나가기");
+            System.out.println("0. 메인 메뉴로");
 			System.out.println();
             System.out.print("메뉴 선택 ▶ ");
             
@@ -42,7 +41,7 @@ public class CategoryView {
 	public void selectCategory() {
 		List<CategoryVO> categories = categoryDao.selectCategory();
 		UIHelper.printCategoryTree(categories);
-		printEnter();
+		// printEnter();
 	}	
 	
 	public void insertCategory() {
@@ -66,7 +65,7 @@ public class CategoryView {
             UIHelper.printError("카테고리 등록에 실패했습니다.");
         }
         
-        printEnter();
+        // printEnter();
 	}
 	
     private int selectParentCategory() {
@@ -159,7 +158,7 @@ public class CategoryView {
         } else {
             UIHelper.printError("카테고리 수정에 실패했습니다.");
         }        
-        printEnter();			
+        // printEnter();			
 	}
 	
 
@@ -210,7 +209,7 @@ public class CategoryView {
             UIHelper.printWarning("삭제가 취소되었습니다.");
         }
         
-        printEnter();
+        // printEnter();
 	}
 
     private void printEnter() {

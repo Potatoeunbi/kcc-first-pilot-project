@@ -20,11 +20,11 @@ public class OrderManageView {
     public void run() {
         while (true) {
             UIHelper.printTitle("📦 주문 관리");
-            System.out.println("1. 주문 목록 보기");
-            System.out.println("2. 주문 추가");
+            System.out.println("1. 주문 조회");
+            System.out.println("2. 주문 등록");
             System.out.println("3. 주문 수정");
             System.out.println("4. 주문 삭제");
-            System.out.println("0. 뒤로가기");
+            System.out.println("0. 메인 메뉴로");
             System.out.println();
             System.out.print("메뉴 선택 ▶ ");
 
@@ -148,7 +148,7 @@ public class OrderManageView {
     
     private void printMenuAll() {
     	menuList = menuDao.selectAllMenus(); // 역할 목록 조회
-    	UIHelper.printBoxedList("메뉴 선택", "메뉴가 없습니다.", menuList, menu -> String.format("번호: %d | 이름: %s | 가격: %s\n", menu.getMenuId(), menu.getMenuName(), menu.getPrice()));
+    	UIHelper.printBoxedList("메뉴 선택", "메뉴가 없습니다.", menuList, menu -> String.format("번호: %d | 이름: %s | 가격: %s", menu.getMenuId(), menu.getMenuName(), menu.getPrice()));
     }
     
     private MenuVO checkMenuId(boolean updateMode) {

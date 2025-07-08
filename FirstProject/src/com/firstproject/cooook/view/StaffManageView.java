@@ -17,11 +17,11 @@ public class StaffManageView {
     public void run() {
         while (true) {
         	UIHelper.printTitle("👤 작업자 관리");
-            System.out.println("1. 작업자 보기");
-            System.out.println("2. 작업자 추가");
+            System.out.println("1. 작업자 조회");
+            System.out.println("2. 작업자 등록");
             System.out.println("3. 작업자 수정");
             System.out.println("4. 작업자 삭제");
-            System.out.println("0. 뒤로가기");
+            System.out.println("0. 메인 메뉴로");
             System.out.println();
             System.out.print("메뉴 선택 ▶ ");
             String input = sc.nextLine();

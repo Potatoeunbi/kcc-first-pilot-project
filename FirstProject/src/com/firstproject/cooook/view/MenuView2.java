@@ -13,14 +13,13 @@ public class MenuView2 {
     public void showMenuView() {
         while (true) {
             UIHelper.printTitle("📂 메뉴 관리");
-            System.out.println();
             System.out.println("1. 메뉴 조회");
             System.out.println("2. 메뉴 등록");
             System.out.println("3. 메뉴 수정");
             System.out.println("4. 메뉴 삭제");
             System.out.println("0. 메인 메뉴로");
             System.out.println();
-            System.out.print("메뉴 선택 ▶: ");
+            System.out.print("메뉴 선택 ▶ ");
             
             String input = scanner.next();
             if (!Util.isInteger(input)) continue;
@@ -40,8 +39,8 @@ public class MenuView2 {
 
     private void showMenuList() {
         List<Menu> menus = menuRepository.getAllMenus();
-        UIHelper.printBoxedList("[🍽️ 전체 메뉴 목록]", "등록된 메뉴가 없습니다.", menus, menu -> String.format("ID: %3d | 이름: %s", menu.getMenuId(), menu.getMenuName()));
-        printEnter();
+        UIHelper.printBoxedList("[🍽️ 전체 메뉴 목록]", "등록된 메뉴가 없습니다.", menus, menu -> String.format("ID: %3d | 이름: %s | 가격: %d", menu.getMenuId(), menu.getMenuName(), menu.getPrice()));
+        // printEnter();
     }
     
     private void addMenu() {
@@ -59,6 +58,14 @@ public class MenuView2 {
 
         Menu newMenu = new Menu();
         newMenu.setMenuName(menuName);
+
+        System.out.print("가격 입력 ▶: ");
+        String input = scanner.next();
+        if (!Util.isInteger(input)) return;
+        
+        int price = Integer.parseInt(input);
+
+        newMenu.setPrice(price);
         
         if (menuRepository.insertMenu(newMenu) > 0) {
             UIHelper.printSuccess("메뉴가 성공적으로 등록되었습니다!");
@@ -66,7 +73,7 @@ public class MenuView2 {
             UIHelper.printError("메뉴 등록에 실패했습니다.");
         }
         
-        printEnter();
+        // printEnter();
     }
     
     private void updateMenu() {
@@ -80,7 +87,7 @@ public class MenuView2 {
         }
         
         System.out.println("수정할 메뉴를 선택하세요:");
-        UIHelper.printBoxedList("🍽️ 메뉴 목록", menus, menu -> String.format("ID: %3d | 이름: %s", menu.getMenuId(), menu.getMenuName()));
+        UIHelper.printBoxedList("🍽️ 메뉴 목록", menus, menu -> String.format("ID: %3d | 이름: %s | 가격: %d", menu.getMenuId(), menu.getMenuName(), menu.getPrice()));
         
         System.out.print("메뉴 ID ▶: ");
         String input = scanner.next();
@@ -107,13 +114,21 @@ public class MenuView2 {
         
         targetMenu.setMenuName(newName);
         
+        System.out.print("가격 입력 ▶: ");
+        input = scanner.next();
+        if (!Util.isInteger(input)) return;
+        
+        int price = Integer.parseInt(input);
+
+        targetMenu.setPrice(price);
+        
         if (menuRepository.updateMenu(targetMenu)) {
             UIHelper.printSuccess("메뉴가 성공적으로 수정되었습니다!");
         } else {
             UIHelper.printError("메뉴 수정에 실패했습니다.");
         }
         
-        printEnter();
+        // printEnter();
     }
 
     private void deleteMenu() {
@@ -127,7 +142,7 @@ public class MenuView2 {
         }
         
         System.out.println("삭제할 메뉴를 선택하세요:");
-        UIHelper.printBoxedList("🍽️ 메뉴 목록", menus, menu -> String.format("ID: %3d | 이름: %s", menu.getMenuId(), menu.getMenuName()));
+        UIHelper.printBoxedList("🍽️ 메뉴 목록", menus, menu -> String.format("ID: %3d | 이름: %s | 가격: %d", menu.getMenuId(), menu.getMenuName(), menu.getPrice()));
         
         System.out.print("메뉴 ID ▶: ");
         String input = scanner.next();
@@ -155,7 +170,7 @@ public class MenuView2 {
             UIHelper.printWarning("삭제가 취소되었습니다.");
         }
         
-        printEnter();
+        // printEnter();
     }
     
     private boolean isMenuNameExists(String menuName, Integer excludeId) {

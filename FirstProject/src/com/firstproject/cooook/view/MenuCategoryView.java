@@ -20,14 +20,13 @@ public class MenuCategoryView {
     public void showMenuCategoryView() {
         while (true) {
             UIHelper.printTitle("📂 메뉴-카테고리 연결 관리");
-            System.out.println();
             System.out.println("1. 메뉴-카테고리 연결 조회");
             System.out.println("2. 메뉴-카테고리 연결 등록");
             System.out.println("3. 메뉴-카테고리 연결 수정");
             System.out.println("4. 메뉴-카테고리 연결 삭제");
             System.out.println("0. 메인 메뉴로");
             System.out.println();
-            System.out.print("메뉴 선택 ▶: ");
+            System.out.print("메뉴 선택 ▶ ");
             
             String input = scanner.next();
             if (!Util.isInteger(input)) continue;
@@ -48,7 +47,7 @@ public class MenuCategoryView {
     private void showMenuCategoryList() {
         List<MenuCategory> menuCategories = menuCategoryDAO.getAllMenuCategories();
         UIHelper.printMenuCategoryTree(menuCategories);     
-        printEnter();
+        // printEnter();
     }
 
     private void addMenuCategory() {
@@ -94,7 +93,7 @@ public class MenuCategoryView {
             UIHelper.printError("메뉴-카테고리 연결 등록에 실패했습니다.");
         }
         
-        printEnter();
+        // printEnter();
     }
 
     private void updateMenuCategory() {
@@ -167,7 +166,7 @@ public class MenuCategoryView {
             UIHelper.printError("메뉴-카테고리 연결 수정에 실패했습니다.");
         }
 
-        printEnter();
+        // printEnter();
     }
 
     private void deleteMenuCategory() {
@@ -231,7 +230,7 @@ public class MenuCategoryView {
             UIHelper.printWarning("삭제가 취소되었습니다.");
         }
         
-        printEnter();
+        // printEnter();
     }
 
     private void printEnter() {
