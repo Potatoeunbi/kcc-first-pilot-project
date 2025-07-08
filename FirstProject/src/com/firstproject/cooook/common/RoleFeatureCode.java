@@ -15,7 +15,7 @@ public class RoleFeatureCode {
         WORKER_MANAGE,          "작업자 관리",
         ROLE_MANAGE,            "권한 관리",
         ORDER_MANAGE,           "주문 관리",
-        MATERIAL_MANAGE,        "재료 관리",
+        MATERIAL_MANAGE,        "레시피 관리",
         CATEGORY_MANAGE,        "카테고리 관리",
         MENU_MANAGE,            "메뉴 관리",
         MENU_CATEGORY_MANAGE,   "메뉴 카테고리 관리"
