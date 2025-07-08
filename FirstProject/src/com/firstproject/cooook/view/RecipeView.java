@@ -220,7 +220,6 @@ public class RecipeView {
 	                return;
 	            }
 
-	            // 기존 레시피 출력
 	            System.out.println("\n[" + recipes.get(0).getMenuName() + "] 기존 레시피");
 	            System.out.printf("%-5s %-12s %-7s %-5s %s\n", "ID", "재료", "수량", "단위", "설명");
 	            for (RecipeVO vo : recipes) {
@@ -229,12 +228,10 @@ public class RecipeView {
 	                    vo.getQuantity(), vo.getUnit(), vo.getDescription());
 	            }
 
-	            // 🔄 임시 저장 리스트
 	            List<Integer> toDelete = new ArrayList<>();
 	            List<RecipeVO> toUpdate = new ArrayList<>();
 	            List<RecipeVO> toInsert = new ArrayList<>();
 
-	            // 1. 삭제
 	            System.out.print("\n삭제할 재료 ID 입력 (콤마, 없으면 엔터): ");
 	            String deleteLine = sc.nextLine();
 	            if (!deleteLine.isBlank()) {
@@ -400,8 +397,6 @@ public class RecipeView {
 	            System.out.println("❌ 예외 발생: " + e.getMessage());
 	        }
 	    }
-
-
 
 	    
 }

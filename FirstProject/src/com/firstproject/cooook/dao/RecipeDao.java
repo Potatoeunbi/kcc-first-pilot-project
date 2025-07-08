@@ -180,8 +180,6 @@ public class RecipeDao {
 	    return result;
 	}
 
-
-
 	public int deleteRecipeByMenuId(int menuId) {
 	    int result = 0;
 	    String sql = "DELETE FROM recipe WHERE menu_id = ?";
@@ -199,8 +197,4 @@ public class RecipeDao {
 	    return result;
 	}
 
-
- 
-    
-    
 }
