@@ -33,7 +33,7 @@ public class MainView {
             
            System.out.println("0. 로그아웃");
            System.out.println();
-           System.out.print("선택: ");
+           System.out.print("메뉴 선택 ▶ ");
 
            int choice = -1;
            

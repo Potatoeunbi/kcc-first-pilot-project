@@ -16,11 +16,11 @@ public class RoleManageView {
     public void run() {
         while (true) {
             UIHelper.printTitle("[🔒 권한 관리]");
-            System.out.println("1. 권한 보기");
-            System.out.println("2. 권한 추가");
+            System.out.println("1. 권한 조회");
+            System.out.println("2. 권한 등록");
             System.out.println("3. 권한 수정");
             System.out.println("4. 권한 삭제");
-            System.out.println("0. 뒤로가기");
+            System.out.println("0. 메인 메뉴로");
             System.out.println();
             System.out.print("메뉴 선택 ▶ ");
             String input = sc.nextLine();
@@ -61,8 +61,8 @@ public class RoleManageView {
             con = DBUtil.getConnection();
             con.setAutoCommit(false); // 트랜잭션 시작
             
-            mergeRoleFeature(con, false, -1);
             roleDao.insertRole(con, role);
+            mergeRoleFeature(con, false, -1);
             con.commit();
             UIHelper.printSuccess("권한 등록 완료!");
         } catch (Exception e) {
