@@ -8,11 +8,7 @@ import com.firstproject.cooook.util.Util;
 
 public class MenuView2 {
     private MenuRepository menuRepository = new MenuRepository();
-    private Scanner scanner;
-    
-    public MenuView2(Scanner scanner) {
-        this.scanner = scanner;
-    }
+    private Scanner scanner = new Scanner(System.in);
     
     public void showMenuView() {
         while (true) {

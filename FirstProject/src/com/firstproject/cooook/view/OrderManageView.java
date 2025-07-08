@@ -52,7 +52,7 @@ public class OrderManageView {
 
     private void printOrderAll() {
     	List<OrderVO> orders = orderDao.getAllOrders();
-        UIHelper.printBoxedList("[📦 전체 주문 목록]", "주문이 없습니다.", orders, o -> String.format("번호: %d | 직원명 : %s | 메뉴명: %s | 수량: %d | 총액: %d | 주문일: %s\n",
+        UIHelper.printBoxedList("[📦 전체 주문 목록]", "주문이 없습니다.", orders, o -> String.format("번호: %d | 직원명 : %s | 메뉴명: %s | 수량: %d | 총액: %d | 주문일: %s",
         		 o.getOrderId(), o.getStaffName(), o.getMenuName(),
                  o.getQuantity(), o.getTotalPrice(), o.getCreatedAt()));
     }

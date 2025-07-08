@@ -50,12 +50,13 @@ public class MenuRepository {
     }
     
     public int insertMenu(Menu menu) {
-        String sql = "INSERT INTO menu VALUES (MENU_SEQ.NEXTVAL, ?)";
+        String sql = "INSERT INTO menu VALUES (MENU_SEQ.NEXTVAL, ?, ?)";
         
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             pstmt.setString(1, menu.getMenuName());
+            pstmt.setInt(2, 0);
             return pstmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println("❌ 메뉴 등록 중 오류: " + e.getMessage());
@@ -79,20 +80,6 @@ public class MenuRepository {
         return false;
     }
     
-    // public boolean deleteMenu(int menuId) {
-    //     String sql = "DELETE FROM menu WHERE menu_id = ?";
-        
-    //     try (Connection conn = DBUtil.getConnection();
-    //          PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-    //         pstmt.setInt(1, menuId);
-    //         return pstmt.executeUpdate() > 0;
-    //     } catch (SQLException e) {
-    //         System.err.println("❌ 메뉴 삭제 중 오류: " + e.getMessage());
-    //     }
-    //     return false;
-    // }
-
     public boolean deleteMenu(int menuId) {
         String deleteMenuCategorySql = "DELETE FROM menu_category WHERE menu_id = ?";
         String deleteMenuSql = "DELETE FROM menu WHERE menu_id = ?";

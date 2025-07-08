@@ -14,13 +14,13 @@ public class MainView {
 	private Scanner sc = new Scanner(System.in);
 
 
-    public void showMenu() {
-        while (true) {
-           StaffVO staff = Session.getCurrentUser();
-        	
-           RoleDao roleFeatureDao = new RoleDao();
-           List<String> featureCodes = roleFeatureDao.getFeaturesByRoleId(staff.getRoleId());
+    public void showMenu() {           
+        StaffVO staff = Session.getCurrentUser();
+        
+        RoleDao roleFeatureDao = new RoleDao();
+        List<String> featureCodes = roleFeatureDao.getFeaturesByRoleId(staff.getRoleId());
 
+        while (true) {     
            UIHelper.printTitle("📋 " + staff.getRoleName() + " 메뉴");
            int index = 1;
            Map<Integer, String> menuIndexToFeature = new LinkedHashMap<>();
@@ -32,8 +32,9 @@ public class MainView {
            }
             
            System.out.println("0. 로그아웃");
-
+           System.out.println();
            System.out.print("선택: ");
+
            int choice = -1;
            
            try {
@@ -61,8 +62,8 @@ public class MainView {
                case RoleFeatureCode.ORDER_MANAGE -> new OrderManageView().run();
                case RoleFeatureCode.MATERIAL_MANAGE -> new RecipeView().run();
                case RoleFeatureCode.CATEGORY_MANAGE -> new CategoryView().showMenu();
-               case RoleFeatureCode.MENU_MANAGE -> new MenuView2(sc).showMenuView();
-               case RoleFeatureCode.MENU_CATEGORY_MANAGE -> new MenuCategoryView(sc).showMenuCategoryView();
+               case RoleFeatureCode.MENU_MANAGE -> new MenuView2().showMenuView();
+               case RoleFeatureCode.MENU_CATEGORY_MANAGE -> new MenuCategoryView().showMenuCategoryView();
                 
                default -> UIHelper.printError("구현되지 않은 기능입니다..");
            }
