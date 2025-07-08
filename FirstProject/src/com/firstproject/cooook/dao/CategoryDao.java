@@ -185,27 +185,6 @@ public class CategoryDao {
 		return false;
 	}
 
-	// public boolean deleteCategory(int categoryId) {
-	// 	String sql = """
-	// 			DELETE FROM category
-	// 			WHERE category_id IN (
-	// 			    SELECT category_id FROM category
-	// 			    START WITH category_id = ?
-	// 			    CONNECT BY PRIOR category_id = parent_id
-	// 			)
-	// 			""";
-	// 	try (Connection connection = DBUtil.getConnection();
-	// 			PreparedStatement statement = connection.prepareStatement(sql)) {
-
-	// 		statement.setInt(1, categoryId);
-	// 		return statement.executeUpdate() > 0;
-	// 	} catch (SQLException e) {
-    //         System.err.println("❌ 카테고리 삭제 중 오류: " + e.getMessage());	
-	// 	}
-	// 	return false;
-	// }
-
-	
     public boolean deleteCategory(int categoryId) {
         String deleteMenuCategorySql = """
 				DELETE FROM menu_category
