@@ -15,11 +15,7 @@ public class MenuCategoryView {
     private MenuCategoryDAO menuCategoryDAO = new MenuCategoryDAO();
     private MenuRepository menuDAO = new MenuRepository();
     private CategoryDao categoryDAO = new CategoryDao();
-    private Scanner scanner;
-
-    public MenuCategoryView(Scanner scanner) {
-        this.scanner = scanner;
-    }
+    private Scanner scanner = new Scanner(System.in);
 
     public void showMenuCategoryView() {
         while (true) {
