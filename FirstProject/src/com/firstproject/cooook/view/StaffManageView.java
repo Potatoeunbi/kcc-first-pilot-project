@@ -16,8 +16,7 @@ public class StaffManageView {
 
     public void run() {
         while (true) {
-        	 UIHelper.printTitle("👤 작업자 관리");
-             System.out.println();
+        	UIHelper.printTitle("👤 작업자 관리");
             System.out.println("1. 작업자 보기");
             System.out.println("2. 작업자 추가");
             System.out.println("3. 작업자 수정");
@@ -28,22 +27,12 @@ public class StaffManageView {
             String input = sc.nextLine();
 
             switch (input) {
-            	case "1":
-            		printStaffAll();
-            		break;
-                case "2":
-                    insertStaff();
-                    break;
-                case "3":
-                    updateStaff();
-                    break;
-                case "4":
-                    deleteStaff();
-                    break;
-                case "0":
-                    return;
-                default:
-                	UIHelper.printError("잘못된 입력입니다.");
+            	case "1":   printStaffAll();    break;
+                case "2":   insertStaff();      break;
+                case "3":   updateStaff();      break;
+                case "4":   deleteStaff();      break;
+                case "0":   return;
+                default:    UIHelper.printError("잘못된 입력입니다.");
             }
         }
     }
@@ -68,7 +57,6 @@ public class StaffManageView {
             
             staffDao.insertStaff(staff);
             UIHelper.printSuccess("작업자 등록 완료!");
-            UIHelper.printDivider();
         } catch (Exception e) {
         	UIHelper.printError("입력 오류: " + e.getMessage());
         }
@@ -138,17 +126,16 @@ public class StaffManageView {
     private void printStaffAll() {
         List<StaffVO> staffList = staffDao.getStaffAll();
 
-        UIHelper.printBoxedList("[👤 전체 작업자 목록]", "작업자가 없습니다.", staffList, staff -> String.format("번호: %d | 이름: %s %s | 권한: %s | 이메일: %s | 전화번호: %s | 생성일: %s\n",
+        UIHelper.printBoxedList("[👤 전체 작업자 목록]", "작업자가 없습니다.", staffList, 
+        staff -> String.format("번호: %3d | 이름: %s | 권한: %s | 이메일: %s | 전화번호: %s | 생성일: %s",
                 staff.getStaffId(),
-                staff.getFirstName(),
-                staff.getLastName(),
+                staff.getFirstName() + " " + staff.getLastName(),
                 staff.getRoleName(),
                 staff.getEmail(),
                 staff.getPhone(),
                 staff.getCreatedAt()));
     }
 
-    
     private void deleteStaff() {
         try {
         	UIHelper.printTitle("[👤 작업자 삭제]");

@@ -16,27 +16,15 @@ public class LoginView {
     	StaffVO loginStaff = null;
     	while(true) {
             UIHelper.printTitle("🔐 로그인 화면");
-            // System.out.println("========================================");
-            // System.out.println("               🔐 로그인 화면");
-            // System.out.println("========================================");
 
             System.out.print("아이디(이메일) \t: ");
-            // System.out.print("아이디(이메일)  : ");
             String email = sc.nextLine();
 
             System.out.print("비밀번호 \t: ");
-            // System.out.print("비밀번호       : ");
             String pw = sc.nextLine();
-
-            UIHelper.printDivider();
-            // System.out.println("========================================");
-
 
             loginStaff = staffDao.login(email, pw);
             if (loginStaff == null) {
-            	// System.out.print("\033[H\033[2J");
-            	// System.out.flush();
-                // System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n❌ 로그인 실패: 이메일 또는 비밀번호가 잘못되었습니다.");
                 System.out.println();
                 UIHelper.printError("로그인 실패: 이메일 또는 비밀번호가 잘못되었습니다.");
             }else {
@@ -48,12 +36,11 @@ public class LoginView {
 
         System.out.println();
         UIHelper.printDivider();
+        System.out.println();
         UIHelper.printSuccess("로그인 성공! " + loginStaff.getFirstName()+ loginStaff.getLastName() + "님 환영합니다!");
-        // System.out.print("\033[H\033[2J");
-        // System.out.flush();
-        // System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n========================================");
-        // System.out.println("\n✅ 로그인 성공! " + loginStaff.getFirstName()+ loginStaff.getLastName() + "님 환영합니다!\n");
-        
+        System.out.println();
+        UIHelper.printDivider();
+
         new MainView().showMenu();
     }
 }

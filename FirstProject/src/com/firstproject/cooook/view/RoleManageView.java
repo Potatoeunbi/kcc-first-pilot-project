@@ -16,16 +16,12 @@ public class RoleManageView {
     public void run() {
         while (true) {
             UIHelper.printTitle("[🔒 권한 관리]");
-            System.out.println();
-            // System.out.println("\n\n============= [🔒 권한 관리] =============\n");
             System.out.println("1. 권한 보기");
             System.out.println("2. 권한 추가");
             System.out.println("3. 권한 수정");
             System.out.println("4. 권한 삭제");
             System.out.println("0. 뒤로가기");
-            UIHelper.printDivider();
             System.out.println();
-            // System.out.println("\n========================================\n");
             System.out.print("메뉴 선택 ▶ ");
             String input = sc.nextLine();
 
@@ -46,7 +42,6 @@ public class RoleManageView {
                     return;
                 default:
                     UIHelper.printError("잘못된 입력입니다.");
-                    // System.out.println("❗ 잘못된 입력입니다.");
             }
         }
     }
@@ -185,7 +180,7 @@ public class RoleManageView {
     	if(!updateMode) {
     		roleId = roleDao.selectNextRoleSeq();
     	}else {
-    		int deleteRows = roleDao.deleteRoleFeature(con, roleId);
+    		roleDao.deleteRoleFeature(con, roleId);
     	}
     	
     	String featureInput = null;
