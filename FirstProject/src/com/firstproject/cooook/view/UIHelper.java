@@ -8,10 +8,18 @@ import com.firstproject.cooook.vo.CategoryVO;
 import com.firstproject.cooook.vo.MenuCategory;
 
 public class UIHelper {
-    private static final int count = 100;
+    private static int count = 100;
     private static int left = 0;
     private static int right = 0;
 
+    public static void setCount(int newCount) {
+        count = newCount;
+    }
+
+    public static int getCount() {
+        return count;
+    }
+    
     public static <T> void printBoxedList(String title, String emptyTitle, List<T> list, Function<T, String> formatter) {
         calWidth(title);
         String displayString = "│" + " ".repeat(left) + title + " ".repeat((right + left) % 2 == 0 ? right - 1 : right - 2) + "│";

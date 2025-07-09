@@ -8,6 +8,7 @@ import java.util.Scanner;
 import com.firstproject.cooook.common.RoleFeatureCode;
 import com.firstproject.cooook.common.Session;
 import com.firstproject.cooook.dao.RoleDao;
+import com.firstproject.cooook.util.Util;
 import com.firstproject.cooook.vo.StaffVO;
 
 public class MainView {
@@ -32,6 +33,7 @@ public class MainView {
            }
             
            System.out.println("0. 로그아웃");
+           System.out.println("999. 출력 길이 수정");
            System.out.println();
            System.out.print("메뉴 선택 ▶ ");
 
@@ -47,6 +49,22 @@ public class MainView {
            if (choice == 0) {
                System.out.println("🔒 로그아웃 되었습니다.");
                return;
+           }
+
+           if (choice == 999) {
+                System.out.print("변경할 길이를 입력하세요. (최소길이 50) ▶: ");
+                String input = sc.next();
+                if (!Util.isInteger(input)) continue;
+                
+                int count = Integer.parseInt(input);
+
+                if (count < 50) {
+                    UIHelper.printError("50보다 큰 값을 입력하세요.");
+                    continue;
+                }
+
+                UIHelper.setCount(count);
+                continue;
            }
 
            String selectedFeature = menuIndexToFeature.get(choice);
